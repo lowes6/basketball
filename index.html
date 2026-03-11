@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basketball Cost of Living</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .font-display { font-family: 'Bebas Neue', sans-serif; }
+    .font-body { font-family: 'Barlow', sans-serif; }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(255, 107, 0, 0.6); }
+    }
+    
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes bounce-ball {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    
+    @keyframes court-shine {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    @keyframes qte-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
+    .animate-bounce-ball { animation: bounce-ball 0.8s ease-in-out infinite; }
+    .animate-qte-pulse { animation: qte-pulse 0.6s ease-in-out infinite; }
+    
+    .court-pattern {
+      background: linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.1) 50%, transparent 51%),
+                  linear-gradient(transparent 49%, rgba(255,255,255,0.05) 50%, transparent 51%);
+      background-size: 60px 60px;
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .stat-bar {
+      background: linear-gradient(90deg, #ff6b00, #ff9500);
+      box-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+    }
+    
+    .progress-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    input[type="range"] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    
+    input[type="range"]::-webkit-slider-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #ff6b00;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: -6px;
+    }
+  </style>
+</head>
+<body class="h-full font-body bg-gray-900 overflow-hidden">
+  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);">
+    
+    <div id="title-screen" class="h-full w-full flex flex-col items-center justify-center p-6 court-pattern">
+      <div class="text-center max-w-2xl animate-slide-up">
+        <div class="text-8xl mb-6">🏀</div>
+        <h1 id="main-title" class="font-display text-5xl md:text-7xl text-white mb-2 tracking-wider">WHAT IS THE COST OF LIVING</h1>
+        <h2 class="font-display text-3xl md:text-5xl text-orange-500 mb-6">FOR A BASKETBALL PLAYER?</h2>
+        <p id="main-tagline" class="text-gray-300 text-lg mb-8 italic">"Play hard. Spend smart. Secure your future."</p>
+        
+        <div class="space-y-4">
+          <button id="new-career-btn" class="w-full max-w-sm bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 animate-pulse-glow">
+            <i data-lucide="play" class="inline w-6 h-6 mr-2"></i> NEW CAREER
+          </button>
+          <button id="continue-btn" class="hidden w-full max-w-sm bg-white/10 hover:bg-white/20 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 border border-white/20">
+            <i data-lucide="refresh-cw" class="inline w-6 h-6 mr-2"></i> CONTINUE CAREER
+          </button>
+        </div>
+        
+        <div class="mt-12 grid grid-cols-3 gap-6 text-center">
+          <div class="glass-card rounded-lg p-4">
+            <i data-lucide="trophy" class="w-8 h-8 text-orange-500 mx-auto mb-2"></i>
+            <p class="text-white font-semibold">Play Basketball</p>
+            <p class="text-gray-400 text-sm">Compete & Win</p>
+          </div>
+          <div class="glass-card rounded-lg p-4">
+            <i data-lucide="wallet" class="w-8 h-8 text-green-500 mx-auto mb-2"></i>
+            <p class="text-white font-semibold">Manage Money</p>
+            <p class="text-gray-400 text-sm">Budget & Invest</p>
+          </div>
+          <div class="glass-card rounded-lg p-4">
+            <i data-lucide="graduation-cap" class="w-8 h-8 text-blue-500 mx-auto mb-2"></i>
+            <p class="text-white font-semibold">Learn Finance</p>
+            <p class="text-gray-400 text-sm">Build Wealth</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="create-screen" class="hidden h-full w-full overflow-auto p-6">
+      <div class="max-w-lg mx-auto mt-10">
+        <h2 class="font-display text-4xl text-white text-center mb-8">CREATE YOUR PLAYER</h2>
+        <div class="glass-card rounded-xl p-6 space-y-6">
+          <div>
+            <label class="text-gray-300 block mb-2">Player Name</label>
+            <input type="text" id="player-name-input" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500" placeholder="Enter your name" maxlength="20">
+          </div>
+          <div class="text-center py-6">
+            <div class="text-8xl mb-4">🏀</div>
+            <p class="text-gray-400">Starting as: <span class="text-orange-500 font-bold">ROOKIE</span></p>
+            <p class="text-gray-500 text-sm mt-2">Beginning salary: $50,000/season</p>
+          </div>
+          <button id="start-career-btn" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300">
+            START CAREER
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="game-screen" class="hidden h-full w-full overflow-auto pb-10">
+      
+      <div class="bg-black/30 border-b border-white/10 px-4 py-3 sticky top-0 z-10 backdrop-blur-sm">
+        <div class="flex items-center justify-between max-w-6xl mx-auto">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🏀</span>
+            <div>
+              <p id="player-name-display" class="text-white font-bold">Player Name</p>
+              <p id="career-stage-display" class="text-orange-500 text-sm">Rookie</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="text-right hidden sm:block">
+              <p class="text-gray-400 text-xs">SEASON</p>
+              <p id="season-display" class="text-white font-bold">1</p>
+            </div>
+            <div class="text-right">
+              <p class="text-gray-400 text-xs">INCOME</p>
+              <p id="top-income-display" class="text-green-400 font-bold">$50K</p>
+            </div>
+            <div class="text-right hidden sm:block">
+              <p class="text-gray-400 text-xs">EXPENSES</p>
+              <p id="top-expenses-display" class="text-red-400 font-bold">$40K</p>
+            </div>
+            <div class="text-right">
+              <p class="text-gray-400 text-xs">SAVINGS</p>
+              <p id="savings-display" class="text-blue-400 font-bold">$5K</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 max-w-6xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div class="glass-card rounded-lg p-3 text-center">
+            <i data-lucide="heart" class="w-5 h-5 text-red-500 mx-auto mb-1"></i>
+            <p class="text-gray-400 text-xs">HEALTH</p>
+            <div class="progress-track rounded-full h-2 mt-1">
+              <div id="health-bar" class="stat-bar h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+            </div>
+            <p id="health-value" class="text-white text-sm mt-1">100%</p>
+          </div>
+          <div class="glass-card rounded-lg p-3 text-center">
+            <i data-lucide="zap" class="w-5 h-5 text-yellow-500 mx-auto mb-1"></i>
+            <p class="text-gray-400 text-xs">ENERGY</p>
+            <div class="progress-track rounded-full h-2 mt-1">
+              <div id="energy-bar" class="stat-bar h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+            </div>
+            <p id="energy-value" class="text-white text-sm mt-1">100%</p>
+          </div>
+          <div class="glass-card rounded-lg p-3 text-center">
+            <i data-lucide="star" class="w-5 h-5 text-purple-500 mx-auto mb-1"></i>
+            <p class="text-gray-400 text-xs">SKILL</p>
+            <div class="progress-track rounded-full h-2 mt-1">
+              <div id="skill-bar" class="stat-bar h-full rounded-full transition-all duration-500" style="width: 50%"></div>
+            </div>
+            <p id="skill-value" class="text-white text-sm mt-1">50</p>
+          </div>
+          <div class="glass-card rounded-lg p-3 text-center">
+            <i data-lucide="users" class="w-5 h-5 text-blue-500 mx-auto mb-1"></i>
+            <p class="text-gray-400 text-xs">REPUTATION</p>
+            <div class="progress-track rounded-full h-2 mt-1">
+              <div id="rep-bar" class="stat-bar h-full rounded-full transition-all duration-500" style="width: 30%"></div>
+            </div>
+            <p id="rep-value" class="text-white text-sm mt-1">30</p>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
+          <button class="nav-tab active-tab bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all" data-tab="court">
+            <i data-lucide="target" class="inline w-4 h-4 mr-1"></i> Court
+          </button>
+          <button class="nav-tab bg-white/10 text-gray-300 px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all hover:bg-white/20" data-tab="finances">
+            <i data-lucide="wallet" class="inline w-4 h-4 mr-1"></i> Finances
+          </button>
+          <button class="nav-tab bg-white/10 text-gray-300 px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all hover:bg-white/20" data-tab="lifestyle">
+            <i data-lucide="home" class="inline w-4 h-4 mr-1"></i> Lifestyle
+          </button>
+          <button class="nav-tab bg-white/10 text-gray-300 px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all hover:bg-white/20" data-tab="learn">
+            <i data-lucide="book-open" class="inline w-4 h-4 mr-1"></i> Learn
+          </button>
+        </div>
+
+        <div id="tab-content">
+          
+          <div id="court-tab" class="tab-panel">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="glass-card rounded-xl p-6">
+                <h3 class="font-display text-2xl text-white mb-4"><i data-lucide="play-circle" class="inline w-6 h-6 text-orange-500 mr-2"></i> PLAY GAME</h3>
+                <div class="bg-gradient-to-br from-orange-900/30 to-red-900/30 rounded-lg p-4 mb-4 text-center">
+                  <p class="text-gray-400 text-sm">Next Opponent</p>
+                  <p id="opponent-name" class="text-white text-xl font-bold">City Thunder</p>
+                  <p id="opponent-difficulty" class="text-orange-400 text-sm">Difficulty: Medium</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-4 text-center text-sm">
+                  <div>
+                    <p class="text-gray-400">Games Played</p>
+                    <p id="games-played" class="text-white font-bold text-lg">0</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-400">Win Rate</p>
+                    <p id="win-rate" class="text-green-400 font-bold text-lg">0%</p>
+                  </div>
+                </div>
+                <button id="play-game-btn" class="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-3 rounded-lg transition-all">
+                  <i data-lucide="play" class="inline w-5 h-5 mr-2"></i> PLAY MATCH
+                </button>
+              </div>
+
+              <div class="glass-card rounded-xl p-6">
+                <h3 class="font-display text-2xl text-white mb-4"><i data-lucide="dumbbell" class="inline w-6 h-6 text-green-500 mr-2"></i> TRAINING</h3>
+                <div class="space-y-4">
+                  <button class="train-btn w-full bg-white/10 hover:bg-white/20 text-white py-3 px-4 rounded-lg transition-all text-left flex items-center justify-between" data-type="skill">
+                    <span><i data-lucide="target" class="inline w-4 h-4 mr-2 text-purple-400"></i>Shooting Practice</span>
+                    <span class="text-purple-400 text-sm">+5 Skill</span>
+                  </button>
+                  <button class="train-btn w-full bg-white/10 hover:bg-white/20 text-white py-3 px-4 rounded-lg transition-all text-left flex items-center justify-between" data-type="health">
+                    <span><i data-lucide="heart-pulse" class="inline w-4 h-4 mr-2 text-red-400"></i>Cardio Training</span>
+                    <span class="text-red-400 text-sm">+10 Health</span>
+                  </button>
+                  <button class="train-btn w-full bg-white/10 hover:bg-white/20 text-white py-3 px-4 rounded-lg transition-all text-left flex items-center justify-between" data-type="rest">
+                    <span><i data-lucide="moon" class="inline w-4 h-4 mr-2 text-blue-400"></i>Rest & Recovery</span>
+                    <span class="text-blue-400 text-sm">+30 Energy</span>
+                  </button>
+                </div>
+                <p class="text-gray-500 text-xs mt-4 text-center">Training costs energy but builds your skills</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="finances-tab" class="tab-panel hidden">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="glass-card rounded-xl p-6">
+                <h3 class="font-display text-2xl text-white mb-4"><i data-lucide="trending-up" class="inline w-6 h-6 text-green-500 mr-2"></i> INCOME</h3>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center py-2 border-b border-white/10">
+                    <span class="text-gray-400">Base Salary</span>
+                    <span id="base-salary" class="text-green-400 font-bold">$50,000</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-white/10">
+                    <span class="text-gray-400">Sponsorships (<span id="sponsor-count">0</span>)</span>
+                    <span id="sponsor-income" class="text-green-400 font-bold">$0</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-white/10">
+                    <span class="text-gray-400">Game Bonuses</span>
+                    <span id="game-bonus" class="text-green-400 font-bold">$0</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 pt-3">
+                    <span class="text-white font-bold">Total Earnings</span>
+                    <span id="total-earnings" class="text-green-400 font-bold text-xl">$50,000</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-card rounded-xl p-6">
+                <h3 class="font-display text-2xl text-white mb-4"><i data-lucide="trending-down" class="inline w-6 h-6 text-red-500 mr-2"></i> EXPENSES</h3>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center py-2 border-b border-white/10">
+                    <span class="text-gray-400">Housing</span>
+                    <span id="housing-expense" class="text-red-400 font-bold">$12,000</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-white/10">
+                    <span class="text-gray-400">Nutrition</span>
+                    <span id="nutrition-expense" class="text-red-400 font-bold">$6,000</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-white/10">
+                    <span class="text-gray-400">Insurance</span>
+                    <span id="insurance-expense" class="text-red-400 font-bold">$0</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-white/10">
+                    <span class="text-gray-400">Taxes (35%)</span>
+                    <span id="tax-expense" class="text-red-400 font-bold">$17,500</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 border-b border-white/10">
+                    <span class="text-gray-400">Agent Fee (10%)</span>
+                    <span id="agent-expense" class="text-red-400 font-bold">$5,000</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2 pt-3">
+                    <span class="text-white font-bold">Total Expenses</span>
+                    <span id="total-expenses" class="text-red-400 font-bold text-xl">$40,500</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="md:col-span-2 glass-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="font-display text-2xl text-white"><i data-lucide="piggy-bank" class="inline w-6 h-6 text-yellow-500 mr-2"></i> NET WORTH</h3>
+                  <button id="end-season-btn" class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-2 px-6 rounded-lg transition-all">
+                    <i data-lucide="fast-forward" class="inline w-4 h-4 mr-2"></i> END SEASON
+                  </button>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                  <div class="bg-green-500/20 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Season Income</p>
+                    <p id="net-income" class="text-green-400 font-bold text-xl md:text-2xl">$9,500</p>
+                  </div>
+                  <div class="bg-yellow-500/20 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Career Earnings</p>
+                    <p id="career-earnings" class="text-yellow-400 font-bold text-xl md:text-2xl">$0</p>
+                  </div>
+                  <div class="bg-blue-500/20 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Current Savings</p>
+                    <p id="current-savings" class="text-blue-400 font-bold text-xl md:text-2xl">$0</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="lifestyle-tab" class="tab-panel hidden">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="glass-card rounded-xl p-6">
+                <h3 class="font-display text-2xl text-white mb-4"><i data-lucide="home" class="inline w-6 h-6 text-blue-500 mr-2"></i> HOUSING</h3>
+                <div class="space-y-3">
+                  <label class="housing-option flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border-2 border-transparent transition-all" data-cost="12000" data-type="shared">
+                    <input type="radio" name="housing" value="shared" class="hidden">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-400 housing-radio"></div>
+                    <div class="flex-1">
+                      <p class="text-white font-semibold">Shared Apartment</p>
+                      <p class="text-gray-400 text-sm">$12,000/year • Basic but affordable</p>
+                    </div>
+                  </label>
+                  <label class="housing-option flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border-2 border-transparent transition-all" data-cost="36000" data-type="studio">
+                    <input type="radio" name="housing" value="studio" class="hidden">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-400 housing-radio"></div>
+                    <div class="flex-1">
+                      <p class="text-white font-semibold">Studio Apartment</p>
+                      <p class="text-gray-400 text-sm">$36,000/year • Private, comfortable</p>
+                    </div>
+                  </label>
+                  <label class="housing-option flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border-2 border-transparent transition-all" data-cost="72000" data-type="luxury">
+                    <input type="radio" name="housing" value="luxury" class="hidden">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-400 housing-radio"></div>
+                    <div class="flex-1">
+                      <p class="text-white font-semibold">Luxury Condo</p>
+                      <p class="text-gray-400 text-sm">$72,000/year • Premium lifestyle, +10 reputation</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="glass-card rounded-xl p-6">
+                <h3 class="font-display text-2xl text-white mb-4"><i data-lucide="utensils" class="inline w-6 h-6 text-green-500 mr-2"></i> NUTRITION</h3>
+                <div class="space-y-3">
+                  <label class="nutrition-option flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border-2 border-transparent transition-all" data-cost="6000" data-type="basic">
+                    <input type="radio" name="nutrition" value="basic" class="hidden">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-400 nutrition-radio"></div>
+                    <div class="flex-1">
+                      <p class="text-white font-semibold">Basic Diet</p>
+                      <p class="text-gray-400 text-sm">$6,000/year • Standard nutrition</p>
+                    </div>
+                  </label>
+                  <label class="nutrition-option flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border-2 border-transparent transition-all" data-cost="18000" data-type="athletic">
+                    <input type="radio" name="nutrition" value="athletic" class="hidden">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-400 nutrition-radio"></div>
+                    <div class="flex-1">
+                      <p class="text-white font-semibold">Athletic Diet</p>
+                      <p class="text-gray-400 text-sm">$18,000/year • +5 health recovery</p>
+                    </div>
+                  </label>
+                  <label class="nutrition-option flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border-2 border-transparent transition-all" data-cost="36000" data-type="pro">
+                    <input type="radio" name="nutrition" value="pro" class="hidden">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-400 nutrition-radio"></div>
+                    <div class="flex-1">
+                      <p class="text-white font-semibold">Pro Nutritionist</p>
+                      <p class="text-gray-400 text-sm">$36,000/year • +10 health, +5 skill</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="md:col-span-2 glass-card rounded-xl p-6">
+                <h3 class="font-display text-2xl text-white mb-4"><i data-lucide="shield" class="inline w-6 h-6 text-purple-500 mr-2"></i> INSURANCE</h3>
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                  <div>
+                    <p class="text-white font-semibold">Injury Insurance</p>
+                    <p class="text-gray-400 text-sm">$5,000/year • Covers 50% of lost income if injured</p>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="insurance-toggle" class="sr-only peer">
+                    <div class="w-14 h-7 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-500"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="learn-tab" class="tab-panel hidden">
+            <div class="glass-card rounded-xl p-6">
+              <h3 class="font-display text-2xl text-white mb-2"><i data-lucide="brain" class="inline w-6 h-6 text-yellow-500 mr-2"></i> FINANCIAL TIMEOUT</h3>
+              <p class="text-gray-400 mb-6">Test your financial knowledge and earn bonuses!</p>
+              
+              <div id="quiz-container">
+                <div id="quiz-question" class="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-lg p-6 mb-4">
+                  <p class="text-gray-400 text-sm mb-2">Question <span id="quiz-num">1</span> of 5</p>
+                  <p id="quiz-text" class="text-white text-xl font-semibold">You sign a $5M contract. Your agent takes 10% and taxes are 35%. How much do you actually keep?</p>
+                </div>
+                
+                <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  </div>
+                
+                <div id="quiz-result" class="hidden mt-4 p-4 rounded-lg">
+                  <p id="result-text" class="text-white font-semibold"></p>
+                  <p id="result-explanation" class="text-gray-400 text-sm mt-2"></p>
+                </div>
+                
+                <button id="next-question-btn" class="hidden w-full mt-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 rounded-lg transition-all">
+                  Next Question
+                </button>
+              </div>
+
+              <div class="mt-6 p-4 bg-yellow-500/10 rounded-lg border border-yellow-500/30">
+                <p class="text-yellow-400 font-semibold mb-1"><i data-lucide="lightbulb" class="inline w-4 h-4 mr-1"></i> Financial Literacy Score</p>
+                <div class="progress-track rounded-full h-3 mt-2">
+                  <div id="literacy-bar" class="stat-bar h-full rounded-full transition-all duration-500" style="width: 20%"></div>
+                </div>
+                <p class="text-gray-400 text-sm mt-2">Current level: <span id="literacy-level" class="text-yellow-400">Beginner</span> • Correct answers boost your financial decisions!</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="court-modal" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4 overflow-auto">
+      <div class="w-full max-w-6xl">
+        <div class="grid md:grid-cols-5 gap-3">
+          
+          <div id="controls-panel" class="md:col-span-1 order-3 md:order-1 transition-opacity duration-500">
+            <div class="glass-card rounded-lg p-3 h-fit sticky top-0">
+              <h4 class="text-white font-bold mb-2 text-xs">⌨️ CONTROLS</h4>
+              <div class="space-y-2 text-xs">
+                <div>
+                  <p class="text-orange-400 font-semibold">MOVE</p>
+                  <p class="text-gray-300 text-xs">↑↓←→ or W/A/S/D</p>
+                </div>
+                <div class="border-t border-white/10 pt-1">
+                  <p class="text-green-400 font-semibold">SHOOT</p>
+                  <p class="text-gray-300 text-xs">SPACEBAR</p>
+                </div>
+                <div class="border-t border-white/10 pt-1">
+                  <p class="text-blue-400 font-semibold">PASS</p>
+                  <p class="text-gray-300 text-xs">P Key</p>
+                </div>
+                <div class="border-t border-white/10 pt-1">
+                  <p class="text-yellow-400 font-semibold">DRIVE</p>
+                  <p class="text-gray-300 text-xs">D Key</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:col-span-4 order-1 md:order-2">
+            <div class="text-center mb-4">
+              <p class="text-gray-400 text-sm">COURT MODE</p>
+              <h2 id="court-opponent" class="font-display text-3xl text-white">VS City Thunder</h2>
+              
+              <div class="flex justify-between items-center mt-3 bg-white/5 rounded-lg p-3 backdrop-blur-sm">
+                <div class="text-center">
+                  <p class="text-gray-400 text-xs">YOUR SCORE</p>
+                  <p id="court-player-score" class="text-green-400 font-bold text-2xl">0</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-gray-400 text-xs">QUARTER</p>
+                  <p id="court-quarter" class="text-white font-bold text-2xl">1</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-gray-400 text-xs">OPP SCORE</p>
+                  <p id="court-opponent-score" class="text-red-400 font-bold text-2xl">0</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-b from-orange-900 to-orange-800 rounded-lg p-2 mb-4 border-4 border-white/20">
+              <svg class="w-full" viewBox="0 0 1000 500" style="background: linear-gradient(to bottom, #c4622d, #b8512d); max-height: 450px;">
+                <rect x="20" y="20" width="960" height="460" fill="none" stroke="white" stroke-width="2" />
+                
+                <line x1="500" y1="20" x2="500" y2="480" stroke="white" stroke-width="2" />
+                
+                <circle cx="500" cy="250" r="60" fill="none" stroke="white" stroke-width="2" />
+                <circle cx="500" cy="250" r="4" fill="white" />
+                
+                <rect x="20" y="100" width="40" height="80" fill="rgba(255,255,255,0.1)" stroke="white" stroke-width="2" />
+                <line x1="35" y1="175" x2="55" y2="175" stroke="#ff6b00" stroke-width="3" stroke-linecap="round" />
+                <line x1="36" y1="176" x2="33" y2="210" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                <line x1="43" y1="176" x2="43" y2="213" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                <line x1="50" y1="176" x2="53" y2="210" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                
+                <rect x="20" y="190" width="160" height="120" fill="none" stroke="white" stroke-width="2" />
+                <circle cx="100" cy="250" r="60" fill="none" stroke="white" stroke-width="2" />
+                <path d="M 60 190 Q 100 140 140 190" fill="none" stroke="white" stroke-width="2" />
+                
+                <path d="M 20 110 L 60 110 Q 100 30 140 30" fill="none" stroke="white" stroke-width="1.5" />
+                <path d="M 20 390 L 60 390 Q 100 470 140 470" fill="none" stroke="white" stroke-width="1.5" />
+                
+                <rect x="940" y="100" width="40" height="80" fill="rgba(255,255,255,0.1)" stroke="white" stroke-width="2" />
+                <line x1="945" y1="175" x2="965" y2="175" stroke="#ff6b00" stroke-width="3" stroke-linecap="round" />
+                <line x1="946" y1="176" x2="943" y2="210" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                <line x1="953" y1="176" x2="953" y2="213" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                <line x1="960" y1="176" x2="963" y2="210" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                
+                <rect x="820" y="190" width="160" height="120" fill="none" stroke="white" stroke-width="2" />
+                <circle cx="900" cy="250" r="60" fill="none" stroke="white" stroke-width="2" />
+                <path d="M 860 190 Q 900 140 940 190" fill="none" stroke="white" stroke-width="2" />
+                
+                <path d="M 980 110 L 940 110 Q 900 30 860 30" fill="none" stroke="white" stroke-width="1.5" />
+                <path d="M 980 390 L 940 390 Q 900 470 860 470" fill="none" stroke="white" stroke-width="1.5" />
+                
+                <circle id="player-you" cx="700" cy="250" r="14" fill="#22c55e" stroke="#16a34a" stroke-width="2" />
+                <text id="text-you" x="700" y="255" text-anchor="middle" fill="white" font-size="10" font-weight="bold">YOU</text>
+                <circle id="player-tm1" cx="600" cy="180" r="12" fill="#60a5fa" stroke="#3b82f6" stroke-width="2" />
+                <circle id="player-tm2" cx="600" cy="320" r="12" fill="#60a5fa" stroke="#3b82f6" stroke-width="2" />
+                <circle id="player-tm3" cx="750" cy="140" r="12" fill="#60a5fa" stroke="#3b82f6" stroke-width="2" />
+                <circle id="player-tm4" cx="750" cy="360" r="12" fill="#60a5fa" stroke="#3b82f6" stroke-width="2" />
+                
+                <circle id="player-opp1" cx="300" cy="250" r="14" fill="#ef4444" stroke="#dc2626" stroke-width="2" />
+                <text id="text-opp1" x="300" y="255" text-anchor="middle" fill="white" font-size="9" font-weight="bold">DEF</text>
+                <circle id="player-opp2" cx="400" cy="180" r="12" fill="#fbbf24" stroke="#f59e0b" stroke-width="2" />
+                <circle id="player-opp3" cx="400" cy="320" r="12" fill="#fbbf24" stroke="#f59e0b" stroke-width="2" />
+                <circle id="player-opp4" cx="250" cy="140" r="12" fill="#fbbf24" stroke="#f59e0b" stroke-width="2" />
+                <circle id="player-opp5" cx="250" cy="360" r="12" fill="#fbbf24" stroke="#f59e0b" stroke-width="2" />
+                
+                <circle id="court-ball" cx="500" cy="250" r="12" fill="#ff9500" stroke="black" stroke-width="1.5" />
+                <path id="court-ball-lines-v" d="M 500 238 Q 506 250 500 262" stroke="black" stroke-width="1" fill="none" />
+                <path id="court-ball-lines-h" d="M 488 250 Q 500 244 512 250" stroke="black" stroke-width="1" fill="none" />
+              </svg>
+              
+              <div id="court-phase" class="text-center mt-4 text-white font-semibold">
+                <p id="phase-text">Get Ready...</p>
+              </div>
+            </div>
+
+            <div id="court-actions" class="grid grid-cols-3 gap-3 mb-4">
+              <button id="court-shoot-btn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="text-2xl mb-1">🎯</div>
+                <div class="text-xs">SHOOT</div>
+              </button>
+              <button id="court-pass-btn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="text-2xl mb-1">📍</div>
+                <div class="text-xs">PASS</div>
+              </button>
+              <button id="court-defend-btn" class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <div class="text-2xl mb-1">🏃</div>
+                <div class="text-xs">DRIVE</div>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4 text-sm">
+              <div class="bg-white/5 rounded-lg p-3">
+                <p class="text-gray-400 text-xs">ENERGY</p>
+                <div class="bg-white/20 rounded-full h-3 mt-1 overflow-hidden">
+                  <div id="court-energy-bar" class="bg-yellow-500 h-full" style="width: 100%"></div>
+                </div>
+              </div>
+              <div class="bg-white/5 rounded-lg p-3">
+                <p class="text-gray-400 text-xs">SHOT CLOCK</p>
+                <div class="bg-white/20 rounded-full h-3 mt-1 overflow-hidden">
+                  <div id="court-clock-bar" class="bg-red-500 h-full" style="width: 100%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="court-result" class="hidden text-center">
+              <div id="court-result-icon" class="text-6xl mb-4">🏆</div>
+              <h3 id="court-result-title" class="font-display text-3xl text-white mb-4">VICTORY!</h3>
+              <p class="text-gray-300 mb-4">Final Score: <span id="court-final-score" class="text-green-400 font-bold">0 - 0</span></p>
+              
+              <div class="bg-white/5 rounded-lg p-4 mb-4 space-y-2">
+                <p class="text-gray-400">Earnings: <span id="court-result-earnings" class="text-green-400 font-bold">+$0</span></p>
+                <p class="text-gray-400">Reputation: <span id="court-result-rep" class="text-blue-400 font-bold">+0</span></p>
+                <p class="text-gray-400">Skill Gain: <span id="court-result-skill" class="text-purple-400 font-bold">+0</span></p>
+              </div>
+              
+              <button id="court-close-btn" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 rounded-lg transition-all">
+                Back to Dashboard
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="season-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+      <div class="glass-card rounded-xl p-6 max-w-lg w-full animate-slide-up">
+        <div class="text-center">
+          <div class="text-6xl mb-4">📊</div>
+          <h3 class="font-display text-4xl text-white mb-2">SEASON <span id="ended-season">1</span> COMPLETE!</h3>
+          
+          <div class="grid grid-cols-2 gap-4 my-6">
+            <div class="bg-white/5 rounded-lg p-4">
+              <p class="text-gray-400 text-sm">Games Won</p>
+              <p id="season-wins" class="text-green-400 font-bold text-2xl">0</p>
+            </div>
+            <div class="bg-white/5 rounded-lg p-4">
+              <p class="text-gray-400 text-sm">Net Income</p>
+              <p id="season-net" class="text-green-400 font-bold text-2xl">$0</p>
+            </div>
+          </div>
+          
+          <div id="career-update" class="bg-gradient-to-r from-orange-500/20 to-yellow-500/20 rounded-lg p-4 mb-6 hidden">
+            <p class="text-orange-400 font-bold text-xl">🎉 CAREER UPGRADE!</p>
+            <p id="new-career-stage" class="text-white">You've been promoted!</p>
+          </div>
+          
+          <div id="sponsorship-offer" class="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg p-4 mb-6 hidden">
+            <p class="text-blue-400 font-bold">💼 NEW SPONSORSHIP OFFER!</p>
+            <p id="sponsor-details" class="text-white text-sm">A brand wants to sponsor you!</p>
+            <div class="flex gap-2 mt-3 justify-center">
+              <button id="accept-sponsor" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all">Accept</button>
+              <button id="decline-sponsor" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all">Decline</button>
+            </div>
+          </div>
+          
+          <button id="start-new-season" class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-8 rounded-lg transition-all w-full">
+            Start Season <span id="next-season-num">2</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+      <p id="toast-message">Notification</p>
+    </div>
+
+  </div>
+
+  <script>
+    // ============ GAME STATE & CONSTANTS ============
+    const defaultConfig = {
+      game_title: 'WHAT IS THE COST OF LIVING',
+      tagline: '"Play hard. Spend smart. Secure your future."'
+    };
+
+    const CAREER_STAGES = [
+      { name: 'Rookie', minRep: 0, salary: 50000 },
+      { name: 'Starter', minRep: 40, salary: 150000 },
+      { name: 'Star Player', minRep: 60, salary: 500000 },
+      { name: 'All-Star', minRep: 80, salary: 2000000 },
+      { name: 'Superstar', minRep: 95, salary: 10000000 }
+    ];
+
+    const OPPONENTS = [
+      { name: 'City Thunder', difficulty: 'Easy', winChance: 0.7 },
+      { name: 'Metro Hawks', difficulty: 'Easy', winChance: 0.65 },
+      { name: 'Valley Suns', difficulty: 'Medium', winChance: 0.5 },
+      { name: 'Coast Warriors', difficulty: 'Medium', winChance: 0.45 },
+      { name: 'Mountain Kings', difficulty: 'Hard', winChance: 0.35 },
+      { name: 'Capital Champions', difficulty: 'Hard', winChance: 0.25 }
+    ];
+
+    const QUIZ_QUESTIONS = [
+      {
+        question: "You sign a $5M contract. Your agent takes 10% and taxes are 35%. How much do you actually keep?",
+        options: ["A) $2.25M", "B) $2.75M", "C) $3.25M", "D) $4.00M"],
+        correct: "b",
+        explanation: "$5M - 10% agent ($500K) = $4.5M. Then 35% tax on $4.5M = $1.575M. $4.5M - $1.575M = $2.925M ≈ $2.75M"
+      },
+      {
+        question: "If you invest $10,000 with 7% annual return, how much will you have after 10 years (compound interest)?",
+        options: ["A) $17,000", "B) $19,672", "C) $25,000", "D) $70,000"],
+        correct: "b",
+        explanation: "With compound interest: $10,000 × (1.07)^10 = $19,672. The power of compound interest!"
+      },
+      {
+        question: "Which is the BEST way to build long-term wealth as an athlete?",
+        options: ["A) Spend on luxury cars", "B) Live below your means & invest", "C) Buy expensive jewelry", "D) Loan money to friends"],
+        correct: "b",
+        explanation: "Living below your means and investing creates lasting wealth. Many athletes go broke from overspending."
+      },
+      {
+        question: "Your career is 15 years. If you earn $1M/year, what % should you save for retirement?",
+        options: ["A) 5%", "B) 10%", "C) 25-30%", "D) 50%"],
+        correct: "c",
+        explanation: "Athletes have short careers. Saving 25-30% helps ensure you have money for the 40+ years after sports."
+      },
+      {
+        question: "What happens if you don't have injury insurance and get hurt for a season?",
+        options: ["A) Nothing changes", "B) Team pays full salary", "C) You may lose income", "D) Sponsors pay more"],
+        correct: "c",
+        explanation: "Without insurance, an injury can devastate your finances. Insurance protects against lost income."
+      }
+    ];
+
+    const SPONSORS = [
+      { name: 'FastShoes Athletics', amount: 25000, minRep: 30 },
+      { name: 'PowerDrink Energy', amount: 50000, minRep: 45 },
+      { name: 'TechWear Pro', amount: 100000, minRep: 60 },
+      { name: 'Elite Sports Gear', amount: 250000, minRep: 75 },
+      { name: 'Global Sports Brand', amount: 1000000, minRep: 90 }
+    ];
+
+    // Game variables
+    let currentGameData = null;
+    let currentOpponent = null;
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let pendingSponsor = null;
+    let gameBonus = 0;
+    let courtGameActive = false;
+    let courtMode = null;
+
+    // ============ COURT MODE LOGIC ============
+    class CourtMode {
+      constructor() {
+        this.playerScore = 0;
+        this.oppScore = 0;
+        this.quarter = 1;
+        this.time = 0; // 0-12 minutes per quarter
+        this.possession = 'player';
+        this.energy = 100;
+        this.posession_turns = 0;
+        this.gameEnded = false;
+        this.gameLog = [];
+        
+        // Your team: defending right basket at x=950
+        this.yourTeam = [
+          { id: 'you', x: 750, y: 250, isYou: true, vx: 0, vy: 0 },      // YOU (can control)
+          { id: 'tm1', x: 650, y: 200, isYou: false, vx: 0, vy: 0 },    // Left wing
+          { id: 'tm2', x: 650, y: 300, isYou: false, vx: 0, vy: 0 },    // Right wing
+          { id: 'tm3', x: 550, y: 250, isYou: false, vx: 0, vy: 0 },    // Point guard
+          { id: 'tm4', x: 800, y: 150, isYou: false, vx: 0, vy: 0 }      // Forward
+        ];
+        
+        // Opponent team: defending left basket at x=50
+        this.oppTeam = [
+          { id: 'opp1', x: 250, y: 250, isYou: false, vx: 0, vy: 0 },   // Center
+          { id: 'opp2', x: 350, y: 200, isYou: false, vx: 0, vy: 0 },   // Left wing
+          { id: 'opp3', x: 350, y: 300, isYou: false, vx: 0, vy: 0 },   // Right wing
+          { id: 'opp4', x: 450, y: 250, isYou: false, vx: 0, vy: 0 },   // Point guard
+          { id: 'opp5', x: 200, y: 150, isYou: false, vx: 0, vy: 0 }    // Forward
+        ];
+        
+        // Ball position
+        this.ballX = 750;
+        this.ballY = 250;
+        this.ballVelX = 0;
+        this.ballVelY = 0;
+        this.ballHolder = 'you'; // who has the ball
+        
+        // Game state
+        this.shotClock = 24;
+        this.turnType = null; // 'offense', 'defense', 'rebound'
+        this.keysPressed = {};
+      }
+
+      startGame() {
+        this.playerScore = 0;
+        this.oppScore = 0;
+        this.quarter = 1;
+        this.time = 0;
+        // Randomly start with opponent or player
+        this.possession = Math.random() > 0.5 ? 'player' : 'opponent';
+        this.energy = 100;
+        this.gameEnded = false;
+        this.gameLog = [];
+        this.ballVelX = 0;
+        this.ballVelY = 0;
+        this.playQuarter();
+      }
+
+      async playQuarter() {
+        if (this.quarter > 4) {
+          this.endGame();
+          return;
+        }
+
+        this.time = 0;
+        this.shotClock = 24;
+        this.updateCourtDisplay();
+
+        // Play possessions in quarter (approx 8-10 per quarter)
+        while (this.time < 12 && !this.gameEnded) {
+          await this.playPossession();
+          await new Promise(r => setTimeout(r, 800));
+        }
+
+        if (!this.gameEnded) {
+          this.quarter++;
+          document.getElementById('court-quarter').textContent = this.quarter;
+          document.getElementById('phase-text').textContent = `Quarter ${this.quarter} Starting...`;
+          await new Promise(r => setTimeout(r, 1500));
+          this.playQuarter();
+        }
+      }
+
+      async playPossession() {
+        this.posession_turns = 0;
+        this.shotClock = 24;
+        this.playerPos = 50;
+        this.turnType = this.possession === 'player' ? 'offense' : 'defense';
+
+        // Wait for player choice if their possession
+        if (this.possession === 'player') {
+          this.setupPlayerTurn();
+          return new Promise(resolve => {
+            window.courtModeResolver = resolve;
+          });
+        } else {
+          // Opponent possession
+          await this.runOpponentPossession();
+        }
+      }
+
+      setupPlayerTurn() {
+        document.getElementById('phase-text').textContent = `🏀 Your Ball • Use Arrow Keys or WASD to Move\nSpace: Shoot | P: Pass | D: Drive`;
+        document.getElementById('court-actions').querySelectorAll('button').forEach(btn => btn.disabled = false);
+        
+        // Show controls for 30 seconds
+        const controlsPanel = document.getElementById('controls-panel');
+        controlsPanel.classList.remove('opacity-0');
+        controlsPanel.classList.add('opacity-100');
+        
+        setTimeout(() => {
+          controlsPanel.classList.remove('opacity-100');
+          controlsPanel.classList.add('opacity-0');
+        }, 30000);
+
+        // Update court display
+        this.updateCourtDisplay();
+
+        // Enable keyboard controls
+        this.enableKeyboardControls();
+
+        // Start opponent and teammate AI movement
+        this.startAIMovement();
+
+        // Shot clock countdown
+        if (this.shotClockInterval) clearInterval(this.shotClockInterval);
+        this.shotClock = 24;
+        this.shotClockInterval = setInterval(() => {
+          this.shotClock--;
+          document.getElementById('court-clock-bar').style.width = `${Math.max(0, (this.shotClock / 24) * 100)}%`;
+
+          if (this.shotClock <= 0) {
+            clearInterval(this.shotClockInterval);
+            if (this.possession === 'player' && !this.gameEnded) {
+              document.getElementById('phase-text').textContent = '⏰ TURNOVER! Shot clock expired';
+              this.possession = 'opponent';
+              this.time += 0.5;
+              this.disableKeyboardControls();
+              this.stopAIMovement();
+              setTimeout(() => {
+                if (window.courtModeResolver) window.courtModeResolver();
+              }, 800);
+            }
+          }
+        }, 400);
+      }
+
+      startAIMovement() {
+        if (this.aiInterval) clearInterval(this.aiInterval);
+        
+        this.aiInterval = setInterval(() => {
+          if (this.possession !== 'player' || this.gameEnded) {
+            clearInterval(this.aiInterval);
+            return;
+          }
+
+          // Your teammates cut and move to open spots
+          this.yourTeam.forEach((player, idx) => {
+            if (!player.isYou) {
+              // Randomly move to get open
+              if (Math.random() > 0.7) {
+                const targetX = Math.random() > 0.5 ? 650 : 550;
+                const targetY = Math.random() > 0.5 ? 150 : 350;
+                player.vx = (targetX - player.x) * 0.01;
+                player.vy = (targetY - player.y) * 0.01;
+              }
+              
+              // Apply velocity
+              player.x += player.vx;
+              player.y += player.vy;
+              
+              // Dampen velocity
+              player.vx *= 0.95;
+              player.vy *= 0.95;
+              
+              // Keep in bounds
+              player.x = Math.max(50, Math.min(950, player.x));
+              player.y = Math.max(50, Math.min(450, player.y));
+            }
+          });
+
+          // Opponents defend actively - guard your players and try to steal
+          this.oppTeam.forEach((opp, idx) => {
+            let target = this.yourTeam[Math.min(idx + 1, this.yourTeam.length - 1)];
+            if (idx === 0) target = this.yourTeam[0]; // Opponent center guards you
+            
+            // Move toward assigned player
+            const distX = target.x - opp.x;
+            const distY = target.y - opp.y;
+            const distance = Math.sqrt(distX * distX + distY * distY);
+            
+            if (distance > 40) {
+              opp.vx = (distX / distance) * 2;
+              opp.vy = (distY / distance) * 2;
+            } else {
+              // Already defending, add slight randomness
+              opp.vx += (Math.random() - 0.5) * 0.5;
+              opp.vy += (Math.random() - 0.5) * 0.5;
+            }
+            
+            // Apply velocity with friction
+            opp.x += opp.vx;
+            opp.y += opp.vy;
+            opp.vx *= 0.9;
+            opp.vy *= 0.9;
+            
+            // Keep in bounds
+            opp.x = Math.max(50, Math.min(950, opp.x));
+            opp.y = Math.max(50, Math.min(450, opp.y));
+            
+            // Check if defender is close enough to steal the ball
+            if (this.ballHolder === 'you' && distance < 35) {
+              const stealChance = 0.15; // 15% chance per frame when guarded
+              if (Math.random() < stealChance) {
+                this.playerTurnover('Defender stole the ball!');
+              }
+            }
+          });
+
+          this.updateCourtDisplay();
+        }, 150);
+      }
+
+      playerTurnover(message) {
+        if (this.shotClockInterval) clearInterval(this.shotClockInterval);
+        document.getElementById('phase-text').textContent = `⚠️ ${message}`;
+        this.possession = 'opponent';
+        this.ballHolder = null;
+        this.time += 0.3;
+        
+        this.disableKeyboardControls();
+        this.stopAIMovement();
+        
+        setTimeout(() => {
+          if (window.courtModeResolver) window.courtModeResolver();
+        }, 800);
+      }
+
+      stopAIMovement() {
+        if (this.aiInterval) clearInterval(this.aiInterval);
+      }
+
+      enableKeyboardControls() {
+        // Track which keys are currently pressed (prevents lag from key repeat)
+        this.activeKeys = {};
+
+        this.keyDownHandler = (e) => {
+          if (this.gameEnded || this.possession !== 'player') return;
+          
+          const key = e.key.toLowerCase();
+          
+          // Track key state (don't repeat register)
+          if (this.activeKeys[key]) return;
+          this.activeKeys[key] = true;
+
+          // Action keys (only on initial press)
+          if (key === ' ') { // Space = Shoot
+            e.preventDefault();
+            this.playerShoot();
+          } else if (key === 'p') { // P = Pass
+            e.preventDefault();
+            this.playerPass();
+          } else if ((key === 'd' || key === 'd') && !this.activeKeys['w'] && !this.activeKeys['a'] && !this.activeKeys['s']) { // D = Drive (only if no movement)
+            e.preventDefault();
+            this.playerDrive();
+          }
+        };
+
+        this.keyUpHandler = (e) => {
+          const key = e.key.toLowerCase();
+          this.activeKeys[key] = false;
+        };
+
+        // Continuous movement loop (smooth and efficient)
+        this.moveInterval = setInterval(() => {
+          if (this.gameEnded || this.possession !== 'player') return;
+
+          const player = this.yourTeam[0];
+          const moveSpeed = 3;
+          let moved = false;
+
+          // Check which movement keys are pressed
+          if (this.activeKeys['arrowup'] || this.activeKeys['w']) {
+            player.y -= moveSpeed;
+            moved = true;
+          }
+          if (this.activeKeys['arrowdown'] || this.activeKeys['s']) {
+            player.y += moveSpeed;
+            moved = true;
+          }
+          if (this.activeKeys['arrowleft'] || this.activeKeys['a']) {
+            player.x -= moveSpeed;
+            moved = true;
+          }
+          if (this.activeKeys['arrowright'] || this.activeKeys['d']) {
+            player.x += moveSpeed;
+            moved = true;
+          }
+
+          // Keep in bounds
+          player.x = Math.max(50, Math.min(950, player.x));
+          player.y = Math.max(50, Math.min(450, player.y));
+
+          // Ball follows player when they have it
+          if (moved && this.ballHolder === 'you') {
+            this.ballX = player.x + 5;
+            this.ballY = player.y - 15;
+          }
+          
+          // Only update display every other frame to reduce lag
+          if (moved || this.ballHolder !== 'you') {
+            this.updateCourtDisplay();
+          }
+        }, 50); // Optimized for smooth movement
+
+        document.addEventListener('keydown', this.keyDownHandler.bind(this));
+        document.addEventListener('keyup', this.keyUpHandler.bind(this));
+      }
+
+      disableKeyboardControls() {
+        if (this.keyDownHandler) {
+          document.removeEventListener('keydown', this.keyDownHandler);
+          document.removeEventListener('keyup', this.keyUpHandler);
+          this.keyDownHandler = null;
+          this.keyUpHandler = null;
+        }
+        if (this.moveInterval) {
+          clearInterval(this.moveInterval);
+          this.moveInterval = null;
+        }
+      }
+
+      playerDrive() {
+        if (this.shotClockInterval) clearInterval(this.shotClockInterval);
+        
+        const driveStat = currentGameData.skill_level * 0.8;
+        const turnovers = 1 - (driveStat / 100) * 0.3;
+        const success = Math.random() < turnovers;
+
+        document.getElementById('court-actions').querySelectorAll('button').forEach(b => b.disabled = true);
+
+        if (success) {
+          // Drive toward opponent's basket (left side)
+          const player = this.yourTeam[0];
+          player.x = Math.max(100, player.x - 60);
+          this.ballX = player.x + 5;
+          this.ballY = player.y - 15;
+          this.ballHolder = 'you';
+          
+          document.getElementById('phase-text').textContent = `🏃 DRIVE! You're moving toward the paint...`;
+          this.posession_turns++;
+          this.time += 0.3;
+          
+          setTimeout(() => {
+            this.energy = Math.max(0, this.energy - 8);
+            document.getElementById('court-energy-bar').style.width = `${this.energy}%`;
+            this.setupPlayerTurn();
+          }, 800);
+        } else {
+          document.getElementById('phase-text').textContent = `⚠️ TURNOVER! Defender forced the ball away.`;
+          this.possession = 'opponent';
+          this.ballHolder = null;
+          this.time += 0.5;
+          setTimeout(() => {
+            if (window.courtModeResolver) window.courtModeResolver();
+          }, 800);
+        }
+      }
+
+      playerPass() {
+        if (this.shotClockInterval) clearInterval(this.shotClockInterval);
+        
+        const passStat = currentGameData.skill_level * 0.7;
+        const assistChance = 0.65 + (passStat / 200);
+        const success = Math.random() < assistChance;
+
+        document.getElementById('court-actions').querySelectorAll('button').forEach(b => b.disabled = true);
+
+        if (success) {
+          // Move ball to a teammate
+          const teammate = this.yourTeam[Math.floor(Math.random() * (this.yourTeam.length - 1)) + 1];
+          this.ballX = teammate.x + 5;
+          this.ballY = teammate.y - 15;
+          this.ballHolder = teammate.id;
+          
+          document.getElementById('phase-text').textContent = `📍 GOOD PASS! Teammate has the ball...`;
+          this.posession_turns++;
+          this.time += 0.2;
+          
+          setTimeout(() => {
+            this.energy = Math.max(0, this.energy - 5);
+            document.getElementById('court-energy-bar').style.width = `${this.energy}%`;
+            this.setupPlayerTurn();
+          }, 800);
+        } else {
+          document.getElementById('phase-text').textContent = `📍 TURNOVER! Bad pass intercepted!`;
+          this.possession = 'opponent';
+          this.ballHolder = null;
+          this.time += 0.5;
+          setTimeout(() => {
+            if (window.courtModeResolver) window.courtModeResolver();
+          }, 800);
+        }
+      }
+
+      resetCourt() {
+        // Reset all players to their starting positions
+        // Your team (defending right basket at x=950)
+        this.yourTeam[0].x = 750;
+        this.yourTeam[0].y = 250;
+        this.yourTeam[1].x = 650;
+        this.yourTeam[1].y = 200;
+        this.yourTeam[2].x = 650;
+        this.yourTeam[2].y = 300;
+        this.yourTeam[3].x = 550;
+        this.yourTeam[3].y = 250;
+        this.yourTeam[4].x = 800;
+        this.yourTeam[4].y = 150;
+        
+        // Opponent team (defending left basket at x=50)
+        this.oppTeam[0].x = 250;
+        this.oppTeam[0].y = 250;
+        this.oppTeam[1].x = 350;
+        this.oppTeam[1].y = 200;
+        this.oppTeam[2].x = 350;
+        this.oppTeam[2].y = 300;
+        this.oppTeam[3].x = 450;
+        this.oppTeam[3].y = 250;
+        this.oppTeam[4].x = 200;
+        this.oppTeam[4].y = 150;
+        
+        // Reset ball and velocities
+        this.ballX = 500;
+        this.ballY = 250;
+        this.ballVelX = 0;
+        this.ballVelY = 0;
+        this.ballHolder = null;
+        
+        // Reset shot clock
+        this.shotClock = 24;
+        
+        this.updateCourtDisplay();
+      }
+
+      playerShoot() {
+        if (this.shotClockInterval) clearInterval(this.shotClockInterval);
+
+        // Distance factor: how far from opponent's basket (left side at x≈50)
+        const player = this.yourTeam[0];
+        const distToBasket = Math.sqrt(Math.pow(player.x - 50, 2) + Math.pow(player.y - 235, 2));
+        const distanceFactor = Math.max(0, 1 - (distToBasket / 400));
+        const shootStat = currentGameData.skill_level / 100;
+        const energyFactor = this.energy / 150;
+        
+        // Base percentages by distance
+        let basePercent = 0.35; // Long range
+        if (distToBasket < 300) basePercent = 0.45; // Mid-range
+        if (distToBasket < 150) basePercent = 0.60; // Close to basket
+
+        const shootChance = basePercent + shootStat * 0.2 + energyFactor * 0.1;
+        const made = Math.random() < shootChance;
+
+        if (made) {
+          const points = distToBasket > 300 ? 3 : 2;
+          this.playerScore += points;
+          document.getElementById('court-player-score').textContent = this.playerScore;
+          document.getElementById('phase-text').textContent = `🎯 MADE! ${points === 3 ? '3-POINTER' : '2-POINTER'} +${points}`;
+          
+          this.time += 0.8;
+          
+          // Ball goes through opponent's basket (left side at x=50)
+          this.ballX = 50;
+          this.ballY = 175;
+          this.ballVelX = -3;
+          this.ballVelY = 2;
+          this.ballHolder = null;
+          this.updateCourtDisplay();
+          
+          // Reset court after score - opponent gets the ball (faster)
+          setTimeout(() => {
+            this.resetCourt();
+            // Give ball to opponent to start their possession
+            this.ballX = 250;
+            this.ballY = 250;
+            this.ballHolder = 'opp1';
+            this.possession = 'opponent';
+            this.energy = Math.max(0, this.energy - 15);
+            document.getElementById('court-energy-bar').style.width = `${this.energy}%`;
+            
+            setTimeout(() => {
+              if (window.courtModeResolver) window.courtModeResolver();
+            }, 400);
+          }, 300);
+        } else {
+          document.getElementById('phase-text').textContent = `🔴 MISS! Rebound opportunity...`;
+          
+          // Ball flies away on miss
+          this.ballVelX = (Math.random() - 0.5) * 10;
+          this.ballVelY = (Math.random() - 0.5) * 5 - 3;
+          this.ballHolder = null;
+          
+          this.time += 0.6;
+          
+          // Rebound fight: player can try to get it back
+          const reboundChance = (currentGameData.skill_level / 150) + 0.2;
+          if (Math.random() < reboundChance) {
+            this.yourTeam[0].x = 100;
+            this.yourTeam[0].y = 235;
+            this.ballX = 100;
+            this.ballY = 235;
+            this.ballHolder = 'you';
+            setTimeout(() => {
+              document.getElementById('phase-text').textContent = `🏀 YOU GOT THE REBOUND!`;
+              this.setupPlayerTurn();
+            }, 400);
+            return;
+          }
+
+          this.possession = 'opponent';
+          this.energy = Math.max(0, this.energy - 15);
+          document.getElementById('court-energy-bar').style.width = `${this.energy}%`;
+          
+          setTimeout(() => {
+            if (window.courtModeResolver) window.courtModeResolver();
+          }, 800);
+        }
+      }
+
+      async runOpponentPossession() {
+        // Opponent moves toward player's basket (x=900)
+        const oppCenter = this.oppTeam[0];
+        const targetX = 800;
+        const targetY = 235;
+        
+        // Opponent drives/passes a few times
+        for (let i = 0; i < (2 + Math.floor(Math.random() * 2)); i++) {
+          // Move opponent closer to basket
+          if (oppCenter.x > targetX) {
+            oppCenter.x = Math.max(targetX, oppCenter.x - 30);
+          }
+          if (Math.abs(oppCenter.y - targetY) > 20) {
+            oppCenter.y += oppCenter.y < targetY ? 15 : -15;
+          }
+          
+          const action = Math.random();
+          if (action > 0.6) {
+            document.getElementById('phase-text').textContent = `⚠️ Opponent passing...`;
+          } else {
+            document.getElementById('phase-text').textContent = `⚠️ Opponent driving closer...`;
+          }
+          
+          this.updateCourtDisplay();
+          await new Promise(r => setTimeout(r, 600));
+        }
+
+        // Opponent shoots
+        const oppSkill = 50; // Default opponent skill
+        const shootChance = 0.4 + (oppSkill / 250);
+        const made = Math.random() < shootChance;
+
+        if (made) {
+          const points = Math.random() > 0.7 ? 3 : 2;
+          this.oppScore += points;
+          document.getElementById('court-opponent-score').textContent = this.oppScore;
+          document.getElementById('phase-text').textContent = `⚠️ OPPONENT SCORES ${points}!`;
+          
+          this.time += 1.5;
+          
+          // Reset court after opponent scores - you get the ball
+          await new Promise(r => setTimeout(r, 1000));
+          this.resetCourt();
+          // Give ball to you to start your possession
+          this.ballX = 750;
+          this.ballY = 250;
+          this.ballHolder = 'you';
+          this.possession = 'player';
+        } else {
+          document.getElementById('phase-text').textContent = `⚠️ Opponent misses the shot...`;
+          this.time += 1.5;
+          this.possession = 'player';
+          
+          // Reset opponent to their end after possession
+          this.oppTeam.forEach(p => {
+            if (p.id === 'opp1') p.x = 250;
+          });
+        }
+        
+        // Update shot clock display
+        document.getElementById('court-clock-bar').style.width = `${Math.max(0, (this.shotClock / 24) * 100)}%`;
+        
+        this.updateCourtDisplay();
+        await new Promise(r => setTimeout(r, 1000));
+        if (!this.gameEnded) {
+          this.setupPlayerTurn();
+        }
+      }
+
+      updateCourtDisplay() {
+        // Update all player positions on SVG
+        this.updateTeamPositions();
+        
+        // Ball physics when in motion (only if not held)
+        if (this.ballHolder === null && (this.ballVelX !== 0 || this.ballVelY !== 0)) {
+          this.ballX += this.ballVelX;
+          this.ballY += this.ballVelY;
+          
+          // Gravity effect
+          this.ballVelY += 0.15;
+          
+          // Bounce off boundaries
+          if (this.ballX < 30 || this.ballX > 970) {
+            this.ballVelX *= -0.7;
+            this.ballX = Math.max(30, Math.min(970, this.ballX));
+          }
+          if (this.ballY < 30 || this.ballY > 470) {
+            this.ballVelY *= -0.6;
+            this.ballY = Math.max(30, Math.min(470, this.ballY));
+          }
+        }
+        
+        const ballElement = document.getElementById('court-ball');
+        if (ballElement) {
+          ballElement.setAttribute('cx', this.ballX);
+          ballElement.setAttribute('cy', this.ballY);
+        }
+        
+        // Update ball texture lines to move with ball
+        const ballLinesH = document.getElementById('court-ball-lines-h');
+        const ballLinesV = document.getElementById('court-ball-lines-v');
+        if (ballLinesH) {
+          ballLinesH.setAttribute('d', `M ${this.ballX} ${this.ballY - 12} Q ${this.ballX + 6} ${this.ballY} ${this.ballX} ${this.ballY + 12}`);
+        }
+        if (ballLinesV) {
+          ballLinesV.setAttribute('d', `M ${this.ballX - 12} ${this.ballY} Q ${this.ballX} ${this.ballY - 6} ${this.ballX + 12} ${this.ballY}`);
+        }
+      }
+
+      updateTeamPositions() {
+        const svg = document.querySelector('svg');
+        
+        // Update your team (green)
+        this.yourTeam.forEach(player => {
+          let circle = document.getElementById(`player-${player.id}`);
+          if (!circle) {
+            circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('id', `player-${player.id}`);
+            circle.setAttribute('r', '15');
+            circle.setAttribute('fill', player.isYou ? '#22c55e' : '#60a5fa');
+            circle.setAttribute('opacity', '0.9');
+            circle.setAttribute('stroke', player.isYou ? '#16a34a' : '#3b82f6');
+            circle.setAttribute('stroke-width', '2');
+            svg.appendChild(circle);
+            
+            if (player.isYou) {
+              const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+              text.setAttribute('id', `text-${player.id}`);
+              text.setAttribute('x', player.x);
+              text.setAttribute('y', player.y + 5);
+              text.setAttribute('text-anchor', 'middle');
+              text.setAttribute('fill', 'white');
+              text.setAttribute('font-size', '10');
+              text.setAttribute('font-weight', 'bold');
+              text.textContent = 'YOU';
+              svg.appendChild(text);
+            }
+          }
+          circle.setAttribute('cx', player.x);
+          circle.setAttribute('cy', player.y);
+          
+          if (player.isYou) {
+            const textEl = document.getElementById(`text-${player.id}`);
+            if (textEl) {
+              textEl.setAttribute('x', player.x);
+              textEl.setAttribute('y', player.y + 5);
+            }
+          }
+        });
+        
+        // Update opponent team (red)
+        this.oppTeam.forEach(player => {
+          let circle = document.getElementById(`player-${player.id}`);
+          if (!circle) {
+            circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('id', `player-${player.id}`);
+            circle.setAttribute('r', '15');
+            circle.setAttribute('fill', '#ef4444');
+            circle.setAttribute('opacity', '0.9');
+            circle.setAttribute('stroke', '#dc2626');
+            circle.setAttribute('stroke-width', '2');
+            svg.appendChild(circle);
+            
+            // Add label for opponent center
+            if (player.id === 'opp1') {
+              const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+              text.setAttribute('id', `text-${player.id}`);
+              text.setAttribute('x', player.x);
+              text.setAttribute('y', player.y + 5);
+              text.setAttribute('text-anchor', 'middle');
+              text.setAttribute('fill', 'white');
+              text.setAttribute('font-size', '9');
+              text.setAttribute('font-weight', 'bold');
+              text.textContent = 'DEF';
+              svg.appendChild(text);
+            }
+          }
+          circle.setAttribute('cx', player.x);
+          circle.setAttribute('cy', player.y);
+          
+          // Update text for opponent center
+          const textEl = document.getElementById(`text-opp1`);
+          if (textEl && player.id === 'opp1') {
+            textEl.setAttribute('x', player.x);
+            textEl.setAttribute('y', player.y + 5);
+          }
+        });
+      }
+
+      endGame() {
+        clearInterval(this.shotClockInterval);
+        this.disableKeyboardControls();
+        const won = this.playerScore > this.oppScore;
+        document.getElementById('court-actions').style.display = 'none';
+        document.getElementById('court-result').classList.remove('hidden');
+
+        document.getElementById('court-result-icon').textContent = won ? '🏆' : '😤';
+        document.getElementById('court-result-title').textContent = won ? 'VICTORY!' : 'DEFEAT';
+        document.getElementById('court-result-title').className = `font-display text-3xl ${won ? 'text-green-400' : 'text-red-400'} mb-4`;
+        document.getElementById('court-final-score').textContent = `${this.playerScore} - ${this.oppScore}`;
+
+        // Better rewards for higher scoring and wins
+        const pointDiff = this.playerScore - this.oppScore;
+        let skillGain = won ? 4 : 1;
+        if (pointDiff > 20) skillGain = 6;
+        else if (pointDiff > 10) skillGain = 5;
+
+        const earnings = won 
+          ? Math.round(currentGameData.salary * (0.08 + (pointDiff * 0.002)))
+          : Math.round(currentGameData.salary * 0.02);
+        const rep = won ? (3 + Math.floor(pointDiff / 10)) : 1;
+
+        document.getElementById('court-result-earnings').textContent = `+${formatMoney(earnings)}`;
+        document.getElementById('court-result-rep').textContent = `+${rep}`;
+        document.getElementById('court-result-skill').textContent = `+${skillGain}`;
+
+        this.gameEnded = true;
+        this.earnings = earnings;
+        this.repGain = rep;
+        this.skillGain = skillGain;
+      }
+    }
+
+    // ============ SDK INITIALIZATION ============
+    function initializeSDKs() {
+      // Show title screen immediately
+      document.getElementById('title-screen').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    // ============ SCREEN MANAGEMENT ============
+    function hideAllScreens() {
+      document.getElementById('title-screen').style.display = 'none';
+      document.getElementById('create-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display = 'none';
+    }
+
+    function showTitleScreen() {
+      hideAllScreens();
+      document.getElementById('title-screen').style.display = 'flex';
+      lucide.createIcons();
+    }
+
+    function showCreateScreen() {
+      hideAllScreens();
+      document.getElementById('create-screen').style.display = 'block';
+      lucide.createIcons();
+    }
+
+    function showGameScreen() {
+      hideAllScreens();
+      document.getElementById('game-screen').style.display = 'block';
+      lucide.createIcons();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    // ============ GAME DATA FUNCTIONS ============
+    function createNewPlayer(name) {
+      return {
+        player_name: name,
+        career_stage: 'Rookie',
+        total_earnings: 0,
+        current_savings: 5000,
+        salary: 50000,
+        games_played: 0,
+        games_won: 0,
+        skill_level: 50,
+        reputation: 30,
+        health: 100,
+        fatigue: 0,
+        housing_type: 'shared',
+        housing_cost: 12000,
+        nutrition_plan: 'basic',
+        nutrition_cost: 6000,
+        has_insurance: false,
+        insurance_cost: 0,
+        sponsorship_count: 0,
+        sponsorship_income: 0,
+        financial_literacy: 20,
+        season: 1,
+        story_decisions: 'start_5k',
+        created_at: new Date().toISOString()
+      };
+    }
+
+    async function ensureMinimumSavings() {
+      // Game runs in memory only now
+    }
+
+    async function saveGameData() {
+      // Game runs in memory only now
+    }
+
+    function updateAllDisplays() {
+      if (!currentGameData) return;
+
+      // Top bar
+      document.getElementById('player-name-display').textContent = currentGameData.player_name;
+      document.getElementById('career-stage-display').textContent = currentGameData.career_stage;
+      document.getElementById('season-display').textContent = currentGameData.season;
+      
+      // Calculate income and expenses for top bar
+      const totalIncome = currentGameData.salary + currentGameData.sponsorship_income + gameBonus;
+      const taxAmount = Math.round(totalIncome * 0.35);
+      const agentFee = Math.round(totalIncome * 0.10);
+      const insuranceCost = currentGameData.has_insurance ? 5000 : 0;
+      const totalExpenses = currentGameData.housing_cost + currentGameData.nutrition_cost + insuranceCost + taxAmount + agentFee;
+      
+      document.getElementById('top-income-display').textContent = formatMoney(totalIncome);
+      document.getElementById('top-expenses-display').textContent = formatMoney(totalExpenses);
+      document.getElementById('savings-display').textContent = formatMoney(currentGameData.current_savings);
+
+      // Stats bars
+      const energy = 100 - currentGameData.fatigue;
+      updateStatBar('health', currentGameData.health);
+      updateStatBar('energy', energy);
+      updateStatBar('skill', currentGameData.skill_level);
+      updateStatBar('rep', currentGameData.reputation);
+
+      // Court tab
+      document.getElementById('games-played').textContent = currentGameData.games_played;
+      const winRate = currentGameData.games_played > 0 
+        ? Math.round((currentGameData.games_won / currentGameData.games_played) * 100) 
+        : 0;
+      document.getElementById('win-rate').textContent = `${winRate}%`;
+
+      // Finances tab
+      updateFinancesDisplay();
+
+      // Lifestyle selections
+      updateLifestyleSelections();
+
+      // Financial literacy
+      document.getElementById('literacy-bar').style.width = `${currentGameData.financial_literacy}%`;
+      document.getElementById('literacy-level').textContent = getLiteracyLevel(currentGameData.financial_literacy);
+
+      // Random opponent
+      if (!currentOpponent) setRandomOpponent();
+    }
+
+    function updateStatBar(stat, value) {
+      const bar = document.getElementById(`${stat}-bar`);
+      const valueEl = document.getElementById(`${stat}-value`);
+      if (bar) bar.style.width = `${Math.min(100, Math.max(0, value))}%`;
+      if (valueEl) valueEl.textContent = stat === 'health' || stat === 'energy' ? `${Math.round(value)}%` : Math.round(value);
+    }
+
+    function updateFinancesDisplay() {
+      if (!currentGameData) return;
+
+      const totalIncome = currentGameData.salary + currentGameData.sponsorship_income + gameBonus;
+      const taxAmount = Math.round(totalIncome * 0.35);
+      const agentFee = Math.round(totalIncome * 0.10);
+      const insuranceCost = currentGameData.has_insurance ? 5000 : 0;
+      const totalExpenses = currentGameData.housing_cost + currentGameData.nutrition_cost + insuranceCost + taxAmount + agentFee;
+      const netIncome = totalIncome - totalExpenses;
+
+      document.getElementById('base-salary').textContent = formatMoney(currentGameData.salary);
+      document.getElementById('sponsor-count').textContent = currentGameData.sponsorship_count;
+      document.getElementById('sponsor-income').textContent = formatMoney(currentGameData.sponsorship_income);
+      document.getElementById('game-bonus').textContent = formatMoney(gameBonus);
+      document.getElementById('total-earnings').textContent = formatMoney(totalIncome);
+
+      document.getElementById('housing-expense').textContent = formatMoney(currentGameData.housing_cost);
+      document.getElementById('nutrition-expense').textContent = formatMoney(currentGameData.nutrition_cost);
+      document.getElementById('insurance-expense').textContent = formatMoney(insuranceCost);
+      document.getElementById('tax-expense').textContent = formatMoney(taxAmount);
+      document.getElementById('agent-expense').textContent = formatMoney(agentFee);
+      document.getElementById('total-expenses').textContent = formatMoney(totalExpenses);
+
+      document.getElementById('net-income').textContent = formatMoney(netIncome);
+      document.getElementById('career-earnings').textContent = formatMoney(currentGameData.total_earnings);
+      document.getElementById('current-savings').textContent = formatMoney(currentGameData.current_savings);
+    }
+
+    function updateLifestyleSelections() {
+      if (!currentGameData) return;
+
+      document.querySelectorAll('.housing-option').forEach(opt => {
+        const isSelected = opt.dataset.type === currentGameData.housing_type;
+        opt.classList.toggle('border-orange-500', isSelected);
+        opt.querySelector('.housing-radio').classList.toggle('bg-orange-500', isSelected);
+        opt.querySelector('.housing-radio').classList.toggle('border-orange-500', isSelected);
+      });
+
+      document.querySelectorAll('.nutrition-option').forEach(opt => {
+        const isSelected = opt.dataset.type === currentGameData.nutrition_plan;
+        opt.classList.toggle('border-green-500', isSelected);
+        opt.querySelector('.nutrition-radio').classList.toggle('bg-green-500', isSelected);
+        opt.querySelector('.nutrition-radio').classList.toggle('border-green-500', isSelected);
+      });
+
+      document.getElementById('insurance-toggle').checked = currentGameData.has_insurance;
+    }
+
+    function formatMoney(amount) {
+      if (amount >= 1000000) {
+        return `$${(amount / 1000000).toFixed(1)}M`;
+      } else if (amount >= 1000) {
+        return `$${(amount / 1000).toFixed(0)}K`;
+      }
+      return `$${amount.toLocaleString()}`;
+    }
+
+    function getLiteracyLevel(score) {
+      if (score >= 80) return 'Expert';
+      if (score >= 60) return 'Advanced';
+      if (score >= 40) return 'Intermediate';
+      return 'Beginner';
+    }
+
+    function setRandomOpponent() {
+      currentOpponent = OPPONENTS[Math.floor(Math.random() * OPPONENTS.length)];
+      document.getElementById('opponent-name').textContent = currentOpponent.name;
+      document.getElementById('opponent-difficulty').textContent = `Difficulty: ${currentOpponent.difficulty}`;
+    }
+
+    // ============ GAME ACTIONS ============
+    async function playMatch() {
+      if (!currentGameData) return;
+
+      const energy = 100 - currentGameData.fatigue;
+      if (energy < 20) {
+        showToast('Too tired to play! Rest first.');
+        return;
+      }
+
+      const modal = document.getElementById('court-modal');
+      const result = document.getElementById('court-result');
+      const actions = document.getElementById('court-actions');
+      
+      modal.classList.remove('hidden');
+      result.classList.add('hidden');
+      actions.style.display = 'grid';
+      document.getElementById('court-opponent').textContent = `VS ${currentOpponent.name}`;
+      
+      // Reset court display
+      document.getElementById('court-player-score').textContent = '0';
+      document.getElementById('court-opponent-score').textContent = '0';
+      document.getElementById('court-quarter').textContent = '1';
+      document.getElementById('court-energy-bar').style.width = '100%';
+      document.getElementById('phase-text').textContent = 'Game Starting...';
+
+      // Start game
+      courtMode = new CourtMode();
+      courtMode.startGame();
+    }
+
+    async function finishCourtGame() {
+      if (!courtMode || !currentGameData) return;
+
+      currentGameData.games_played++;
+      currentGameData.fatigue = Math.min(100, currentGameData.fatigue + 30);
+      currentGameData.health = Math.max(0, currentGameData.health - 10);
+
+      if (courtMode.playerScore > courtMode.oppScore) {
+        currentGameData.games_won++;
+      }
+
+      gameBonus += courtMode.earnings;
+      currentGameData.reputation = Math.min(100, currentGameData.reputation + courtMode.repGain);
+      currentGameData.skill_level = Math.min(100, currentGameData.skill_level + courtMode.skillGain);
+
+      updateCareerStage();
+      await saveGameData();
+      updateAllDisplays();
+      setRandomOpponent();
+    }
+
+    function updateCareerStage() {
+      if (!currentGameData) return;
+
+      for (let i = CAREER_STAGES.length - 1; i >= 0; i--) {
+        if (currentGameData.reputation >= CAREER_STAGES[i].minRep) {
+          if (currentGameData.career_stage !== CAREER_STAGES[i].name) {
+            currentGameData.career_stage = CAREER_STAGES[i].name;
+            currentGameData.salary = CAREER_STAGES[i].salary;
+            showToast(`🎉 Promoted to ${CAREER_STAGES[i].name}!`);
+          }
+          break;
+        }
+      }
+    }
+
+    async function train(type) {
+      if (!currentGameData) return;
+
+      const energy = 100 - currentGameData.fatigue;
+      
+      if (type === 'rest') {
+        currentGameData.fatigue = Math.max(0, currentGameData.fatigue - 30);
+        currentGameData.health = Math.min(100, currentGameData.health + 5);
+        showToast('Well rested! Energy restored.');
+      } else if (energy < 15) {
+        showToast('Too tired to train! Rest first.');
+        return;
+      } else if (type === 'skill') {
+        currentGameData.skill_level = Math.min(100, currentGameData.skill_level + 5);
+        currentGameData.fatigue = Math.min(100, currentGameData.fatigue + 15);
+        showToast('Shooting improved! +5 Skill');
+      } else if (type === 'health') {
+        currentGameData.health = Math.min(100, currentGameData.health + 10);
+        currentGameData.fatigue = Math.min(100, currentGameData.fatigue + 10);
+        showToast('Cardio complete! +10 Health');
+      }
+
+      await saveGameData();
+      updateAllDisplays();
+    }
+
+    async function endSeason() {
+      if (!currentGameData) return;
+
+      const totalIncome = currentGameData.salary + currentGameData.sponsorship_income + gameBonus;
+      const taxAmount = Math.round(totalIncome * 0.35);
+      const agentFee = Math.round(totalIncome * 0.10);
+      const insuranceCost = currentGameData.has_insurance ? 5000 : 0;
+      const totalExpenses = currentGameData.housing_cost + currentGameData.nutrition_cost + insuranceCost + taxAmount + agentFee;
+      const netIncome = totalIncome - totalExpenses;
+
+      currentGameData.current_savings += netIncome;
+      currentGameData.total_earnings += totalIncome;
+
+      // Show season summary
+      const modal = document.getElementById('season-modal');
+      document.getElementById('ended-season').textContent = currentGameData.season;
+      document.getElementById('season-wins').textContent = currentGameData.games_won;
+      document.getElementById('season-net').textContent = formatMoney(netIncome);
+      document.getElementById('next-season-num').textContent = currentGameData.season + 1;
+
+      // Check for career upgrade
+      const careerUpdate = document.getElementById('career-update');
+      const oldStage = currentGameData.career_stage;
+      updateCareerStage();
+      if (currentGameData.career_stage !== oldStage) {
+        careerUpdate.classList.remove('hidden');
+        document.getElementById('new-career-stage').textContent = `You're now a ${currentGameData.career_stage}! Salary: ${formatMoney(currentGameData.salary)}`;
+      } else {
+        careerUpdate.classList.add('hidden');
+      }
+
+      // Check for sponsorship offers
+      const sponsorOffer = document.getElementById('sponsorship-offer');
+      pendingSponsor = null;
+      
+      for (let i = SPONSORS.length - 1; i >= 0; i--) {
+        if (currentGameData.reputation >= SPONSORS[i].minRep && Math.random() > 0.5) {
+          pendingSponsor = SPONSORS[i];
+          break;
+        }
+      }
+
+      if (pendingSponsor) {
+        sponsorOffer.classList.remove('hidden');
+        document.getElementById('sponsor-details').textContent = 
+          `${pendingSponsor.name} offers ${formatMoney(pendingSponsor.amount)}/year!`;
+      } else {
+        sponsorOffer.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    async function acceptSponsor() {
+      if (!pendingSponsor || !currentGameData) return;
+      
+      currentGameData.sponsorship_count++;
+      currentGameData.sponsorship_income += pendingSponsor.amount;
+      showToast(`Signed with ${pendingSponsor.name}!`);
+      document.getElementById('sponsorship-offer').classList.add('hidden');
+      pendingSponsor = null;
+      await saveGameData();
+    }
+
+    function declineSponsor() {
+      document.getElementById('sponsorship-offer').classList.add('hidden');
+      pendingSponsor = null;
+    }
+
+    async function startNewSeason() {
+      if (!currentGameData) return;
+
+      currentGameData.season++;
+      currentGameData.games_played = 0;
+      currentGameData.games_won = 0;
+      currentGameData.health = 100;
+      currentGameData.fatigue = 0;
+      gameBonus = 0;
+
+      // Apply nutrition bonuses
+      if (currentGameData.nutrition_plan === 'athletic') {
+        currentGameData.health = Math.min(100, currentGameData.health + 5);
+      } else if (currentGameData.nutrition_plan === 'pro') {
+        currentGameData.health = Math.min(100, currentGameData.health + 10);
+        currentGameData.skill_level = Math.min(100, currentGameData.skill_level + 2);
+      }
+
+      // Apply housing bonus
+      if (currentGameData.housing_type === 'luxury') {
+        currentGameData.reputation = Math.min(100, currentGameData.reputation + 5);
+      }
+
+      await saveGameData();
+      document.getElementById('season-modal').classList.add('hidden');
+      updateAllDisplays();
+      showToast(`Season ${currentGameData.season} begins!`);
+    }
+
+    // ============ QUIZ FUNCTIONS ============
+    function loadQuizQuestion() {
+      const q = QUIZ_QUESTIONS[currentQuizIndex];
+      document.getElementById('quiz-num').textContent = currentQuizIndex + 1;
+      document.getElementById('quiz-text').textContent = q.question;
+      
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = q.options.map((opt, i) => 
+        `<button class="quiz-option bg-white/10 hover:bg-white/20 text-white py-4 px-6 rounded-lg transition-all text-left" data-value="${['a','b','c','d'][i]}">${opt}</button>`
+      ).join('');
+
+      document.getElementById('quiz-result').classList.add('hidden');
+      document.getElementById('next-question-btn').classList.add('hidden');
+
+      // Re-attach event listeners
+      document.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.addEventListener('click', () => answerQuiz(btn.dataset.value));
+      });
+    }
+
+    async function answerQuiz(answer) {
+      const q = QUIZ_QUESTIONS[currentQuizIndex];
+      const isCorrect = answer === q.correct;
+      
+      document.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.value === q.correct) {
+          btn.classList.add('bg-green-500/50');
+        } else if (btn.dataset.value === answer && !isCorrect) {
+          btn.classList.add('bg-red-500/50');
+        }
+      });
+
+      const resultDiv = document.getElementById('quiz-result');
+      resultDiv.classList.remove('hidden');
+      resultDiv.className = `mt-4 p-4 rounded-lg ${isCorrect ? 'bg-green-500/20' : 'bg-red-500/20'}`;
+      
+      document.getElementById('result-text').textContent = isCorrect ? '✅ Correct!' : '❌ Incorrect';
+      document.getElementById('result-explanation').textContent = q.explanation;
+
+      if (isCorrect && currentGameData) {
+        quizScore++;
+        currentGameData.financial_literacy = Math.min(100, currentGameData.financial_literacy + 10);
+        await saveGameData();
+        updateAllDisplays();
+      }
+
+      document.getElementById('next-question-btn').classList.remove('hidden');
+      document.getElementById('next-question-btn').textContent = 
+        currentQuizIndex < QUIZ_QUESTIONS.length - 1 ? 'Next Question' : 'Restart Quiz';
+    }
+
+    function nextQuizQuestion() {
+      currentQuizIndex++;
+      if (currentQuizIndex >= QUIZ_QUESTIONS.length) {
+        currentQuizIndex = 0;
+        quizScore = 0;
+      }
+      loadQuizQuestion();
+    }
+
+    // ============ EVENT LISTENERS ============
+    function setupEventListeners() {
+      // NEW CAREER button - goes to character creation
+      const newCareerBtn = document.getElementById('new-career-btn');
+      if (newCareerBtn) {
+        newCareerBtn.addEventListener('click', showCreateScreen);
+      }
+
+      // CONTINUE CAREER button
+      const continueBtn = document.getElementById('continue-btn');
+      if (continueBtn) {
+        continueBtn.addEventListener('click', () => {
+          if (currentGameData) {
+            showGameScreen();
+            updateAllDisplays();
+          }
+        });
+      }
+
+      // START CAREER button
+      const startCareerBtn = document.getElementById('start-career-btn');
+      if (startCareerBtn) {
+        startCareerBtn.addEventListener('click', async () => {
+          const name = document.getElementById('player-name-input').value.trim() || 'Player';
+          currentGameData = createNewPlayer(name);
+          await saveGameData();
+          showToast('Career started! Good luck, rookie!');
+          showGameScreen();
+          updateAllDisplays();
+        });
+      }
+
+      // PLAY GAME button
+      const playGameBtn = document.getElementById('play-game-btn');
+      if (playGameBtn) {
+        playGameBtn.addEventListener('click', playMatch);
+      }
+
+      // Court action buttons
+      const courtShootBtn = document.getElementById('court-shoot-btn');
+      if (courtShootBtn) {
+        courtShootBtn.addEventListener('click', () => {
+          if (courtMode && !courtMode.gameEnded && courtMode.possession === 'player' && courtMode.ballHolder === 'you') {
+            courtMode.playerShoot();
+          } else {
+            showToast('You must have possession to shoot!');
+          }
+        });
+      }
+
+      const courtPassBtn = document.getElementById('court-pass-btn');
+      if (courtPassBtn) {
+        courtPassBtn.addEventListener('click', () => {
+          if (courtMode && !courtMode.gameEnded && courtMode.possession === 'player' && courtMode.ballHolder === 'you') {
+            courtMode.playerPass();
+          } else {
+            showToast('You must have the ball to pass!');
+          }
+        });
+      }
+
+      const courtDefendBtn = document.getElementById('court-defend-btn');
+      if (courtDefendBtn) {
+        courtDefendBtn.addEventListener('click', () => {
+          if (courtMode && !courtMode.gameEnded && courtMode.possession === 'player' && courtMode.ballHolder === 'you') {
+            courtMode.playerDrive();
+          } else {
+            showToast('You must have the ball to drive!');
+          }
+        });
+      }
+
+      const courtCloseBtn = document.getElementById('court-close-btn');
+      if (courtCloseBtn) {
+        courtCloseBtn.addEventListener('click', async () => {
+          await finishCourtGame();
+          document.getElementById('court-modal').classList.add('hidden');
+        });
+      }
+
+      // Training buttons
+      document.querySelectorAll('.train-btn').forEach(btn => {
+        btn.addEventListener('click', () => train(btn.dataset.type));
+      });
+
+      // Navigation tabs
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.nav-tab').forEach(t => {
+            t.classList.remove('bg-orange-500', 'text-white', 'active-tab');
+            t.classList.add('bg-white/10', 'text-gray-300');
+          });
+          tab.classList.add('bg-orange-500', 'text-white', 'active-tab');
+          tab.classList.remove('bg-white/10', 'text-gray-300');
+
+          document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+          document.getElementById(`${tab.dataset.tab}-tab`).classList.remove('hidden');
+        });
+      });
+
+      // Lifestyle options
+      document.querySelectorAll('.housing-option').forEach(opt => {
+        opt.addEventListener('click', async () => {
+          if (!currentGameData) return;
+          currentGameData.housing_type = opt.dataset.type;
+          currentGameData.housing_cost = parseInt(opt.dataset.cost);
+          await saveGameData();
+          updateAllDisplays();
+          showToast('Housing updated!');
+        });
+      });
+
+      document.querySelectorAll('.nutrition-option').forEach(opt => {
+        opt.addEventListener('click', async () => {
+          if (!currentGameData) return;
+          currentGameData.nutrition_plan = opt.dataset.type;
+          currentGameData.nutrition_cost = parseInt(opt.dataset.cost);
+          await saveGameData();
+          updateAllDisplays();
+          showToast('Nutrition plan updated!');
+        });
+      });
+
+      // Insurance toggle
+      const insuranceToggle = document.getElementById('insurance-toggle');
+      if (insuranceToggle) {
+        insuranceToggle.addEventListener('change', async (e) => {
+          if (!currentGameData) return;
+          currentGameData.has_insurance = e.target.checked;
+          currentGameData.insurance_cost = e.target.checked ? 5000 : 0;
+          await saveGameData();
+          updateAllDisplays();
+          showToast(e.target.checked ? 'Insurance activated!' : 'Insurance cancelled');
+        });
+      }
+
+      // Season and sponsor buttons
+      const endSeasonBtn = document.getElementById('end-season-btn');
+      if (endSeasonBtn) {
+        endSeasonBtn.addEventListener('click', endSeason);
+      }
+
+      const acceptSponsorBtn = document.getElementById('accept-sponsor');
+      if (acceptSponsorBtn) {
+        acceptSponsorBtn.addEventListener('click', acceptSponsor);
+      }
+
+      const declineSponsorBtn = document.getElementById('decline-sponsor');
+      if (declineSponsorBtn) {
+        declineSponsorBtn.addEventListener('click', declineSponsor);
+      }
+
+      const startNewSeasonBtn = document.getElementById('start-new-season');
+      if (startNewSeasonBtn) {
+        startNewSeasonBtn.addEventListener('click', startNewSeason);
+      }
+
+      // Quiz
+      const nextQuestionBtn = document.getElementById('next-question-btn');
+      if (nextQuestionBtn) {
+        nextQuestionBtn.addEventListener('click', nextQuizQuestion);
+      }
+    }
+
+    // Initialize immediately
+    initializeSDKs();
+    loadQuizQuestion();
+
+    // Setup listeners
+    setupEventListeners();
+
+    
+  </script>
+</body>
+</html>
