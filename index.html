@@ -746,7 +746,9 @@
     let courtGameActive = false;
     let courtMode = null;
 
-    // ============ COURT MODE LOGIC ============
+    
+
+// ============ COURT MODE LOGIC ============
     class CourtMode {
       constructor() {
         this.playerScore = 0;
@@ -795,7 +797,6 @@
         this.oppScore = 0;
         this.quarter = 1;
         this.time = 0;
-        // Randomly start with opponent or player
         this.possession = Math.random() > 0.5 ? 'player' : 'opponent';
         this.energy = 100;
         this.gameEnded = false;
@@ -815,7 +816,6 @@
         this.shotClock = 24;
         this.updateCourtDisplay();
 
-        // Play possessions in quarter (approx 8-10 per quarter)
         while (this.time < 12 && !this.gameEnded) {
           await this.playPossession();
           await new Promise(r => setTimeout(r, 800));
@@ -836,14 +836,12 @@
         this.playerPos = 50;
         this.turnType = this.possession === 'player' ? 'offense' : 'defense';
 
-        // Wait for player choice if their possession
         if (this.possession === 'player') {
           this.setupPlayerTurn();
           return new Promise(resolve => {
             window.courtModeResolver = resolve;
           });
         } else {
-          // Opponent possession
           await this.runOpponentPossession();
         }
       }
@@ -852,7 +850,6 @@
         document.getElementById('phase-text').textContent = `🏀 Your Ball • Use Arrow Keys or WASD to Move\nSpace: Shoot | P: Pass | D: Drive`;
         document.getElementById('court-actions').querySelectorAll('button').forEach(btn => btn.disabled = false);
         
-        // Show controls for 30 seconds
         const controlsPanel = document.getElementById('controls-panel');
         controlsPanel.classList.remove('opacity-0');
         controlsPanel.classList.add('opacity-100');
@@ -862,16 +859,10 @@
           controlsPanel.classList.add('opacity-0');
         }, 30000);
 
-        // Update court display
         this.updateCourtDisplay();
-
-        // Enable keyboard controls
         this.enableKeyboardControls();
-
-        // Start opponent and teammate AI movement
         this.startAIMovement();
 
-        // Shot clock countdown
         if (this.shotClockInterval) clearInterval(this.shotClockInterval);
         this.shotClock = 24;
         this.shotClockInterval = setInterval(() => {
@@ -897,16 +888,15 @@
       startAIMovement() {
         if (this.aiInterval) clearInterval(this.aiInterval);
         
+        // Bumped AI up to 50ms from 150ms for smoother tracking
         this.aiInterval = setInterval(() => {
           if (this.possession !== 'player' || this.gameEnded) {
             clearInterval(this.aiInterval);
             return;
           }
 
-          // Your teammates cut and move to open spots
           this.yourTeam.forEach((player, idx) => {
             if (!player.isYou) {
-              // Randomly move to get open
               if (Math.random() > 0.7) {
                 const targetX = Math.random() > 0.5 ? 650 : 550;
                 const targetY = Math.random() > 0.5 ? 150 : 350;
@@ -914,26 +904,20 @@
                 player.vy = (targetY - player.y) * 0.01;
               }
               
-              // Apply velocity
               player.x += player.vx;
               player.y += player.vy;
-              
-              // Dampen velocity
               player.vx *= 0.95;
               player.vy *= 0.95;
               
-              // Keep in bounds
               player.x = Math.max(50, Math.min(950, player.x));
               player.y = Math.max(50, Math.min(450, player.y));
             }
           });
 
-          // Opponents defend actively - guard your players and try to steal
           this.oppTeam.forEach((opp, idx) => {
             let target = this.yourTeam[Math.min(idx + 1, this.yourTeam.length - 1)];
-            if (idx === 0) target = this.yourTeam[0]; // Opponent center guards you
+            if (idx === 0) target = this.yourTeam[0];
             
-            // Move toward assigned player
             const distX = target.x - opp.x;
             const distY = target.y - opp.y;
             const distance = Math.sqrt(distX * distX + distY * distY);
@@ -942,24 +926,20 @@
               opp.vx = (distX / distance) * 2;
               opp.vy = (distY / distance) * 2;
             } else {
-              // Already defending, add slight randomness
               opp.vx += (Math.random() - 0.5) * 0.5;
               opp.vy += (Math.random() - 0.5) * 0.5;
             }
             
-            // Apply velocity with friction
             opp.x += opp.vx;
             opp.y += opp.vy;
             opp.vx *= 0.9;
             opp.vy *= 0.9;
             
-            // Keep in bounds
             opp.x = Math.max(50, Math.min(950, opp.x));
             opp.y = Math.max(50, Math.min(450, opp.y));
             
-            // Check if defender is close enough to steal the ball
             if (this.ballHolder === 'you' && distance < 35) {
-              const stealChance = 0.15; // 15% chance per frame when guarded
+              const stealChance = 0.05; // Lowered steal chance slightly to match new frame rate
               if (Math.random() < stealChance) {
                 this.playerTurnover('Defender stole the ball!');
               }
@@ -967,7 +947,7 @@
           });
 
           this.updateCourtDisplay();
-        }, 150);
+        }, 50); 
       }
 
       playerTurnover(message) {
@@ -990,26 +970,25 @@
       }
 
       enableKeyboardControls() {
-        // Track which keys are currently pressed (prevents lag from key repeat)
+        this.disableKeyboardControls(); // FIX: Clear previous listeners to stop memory leaks
         this.activeKeys = {};
 
+        // Removed .bind(this) so removeEventListener functions properly later
         this.keyDownHandler = (e) => {
           if (this.gameEnded || this.possession !== 'player') return;
           
           const key = e.key.toLowerCase();
           
-          // Track key state (don't repeat register)
           if (this.activeKeys[key]) return;
           this.activeKeys[key] = true;
 
-          // Action keys (only on initial press)
-          if (key === ' ') { // Space = Shoot
+          if (key === ' ') { 
             e.preventDefault();
             this.playerShoot();
-          } else if (key === 'p') { // P = Pass
+          } else if (key === 'p') { 
             e.preventDefault();
             this.playerPass();
-          } else if ((key === 'd' || key === 'd') && !this.activeKeys['w'] && !this.activeKeys['a'] && !this.activeKeys['s']) { // D = Drive (only if no movement)
+          } else if (key === 'd' && !this.activeKeys['w'] && !this.activeKeys['a'] && !this.activeKeys['s'] && !this.activeKeys['arrowup'] && !this.activeKeys['arrowleft'] && !this.activeKeys['arrowdown'] && !this.activeKeys['arrowright']) { 
             e.preventDefault();
             this.playerDrive();
           }
@@ -1020,15 +999,14 @@
           this.activeKeys[key] = false;
         };
 
-        // Continuous movement loop (smooth and efficient)
+        // Bumping to 16ms (approx 60fps) for buttery smooth movement
         this.moveInterval = setInterval(() => {
           if (this.gameEnded || this.possession !== 'player') return;
 
           const player = this.yourTeam[0];
-          const moveSpeed = 3;
+          const moveSpeed = 4; // Adjusted for new frame rate
           let moved = false;
 
-          // Check which movement keys are pressed
           if (this.activeKeys['arrowup'] || this.activeKeys['w']) {
             player.y -= moveSpeed;
             moved = true;
@@ -1046,24 +1024,21 @@
             moved = true;
           }
 
-          // Keep in bounds
           player.x = Math.max(50, Math.min(950, player.x));
           player.y = Math.max(50, Math.min(450, player.y));
 
-          // Ball follows player when they have it
           if (moved && this.ballHolder === 'you') {
             this.ballX = player.x + 5;
             this.ballY = player.y - 15;
           }
           
-          // Only update display every other frame to reduce lag
           if (moved || this.ballHolder !== 'you') {
             this.updateCourtDisplay();
           }
-        }, 50); // Optimized for smooth movement
+        }, 16);
 
-        document.addEventListener('keydown', this.keyDownHandler.bind(this));
-        document.addEventListener('keyup', this.keyUpHandler.bind(this));
+        document.addEventListener('keydown', this.keyDownHandler);
+        document.addEventListener('keyup', this.keyUpHandler);
       }
 
       disableKeyboardControls() {
@@ -1089,7 +1064,6 @@
         document.getElementById('court-actions').querySelectorAll('button').forEach(b => b.disabled = true);
 
         if (success) {
-          // Drive toward opponent's basket (left side)
           const player = this.yourTeam[0];
           player.x = Math.max(100, player.x - 60);
           this.ballX = player.x + 5;
@@ -1126,7 +1100,6 @@
         document.getElementById('court-actions').querySelectorAll('button').forEach(b => b.disabled = true);
 
         if (success) {
-          // Move ball to a teammate
           const teammate = this.yourTeam[Math.floor(Math.random() * (this.yourTeam.length - 1)) + 1];
           this.ballX = teammate.x + 5;
           this.ballY = teammate.y - 15;
@@ -1153,58 +1126,40 @@
       }
 
       resetCourt() {
-        // Reset all players to their starting positions
-        // Your team (defending right basket at x=950)
-        this.yourTeam[0].x = 750;
-        this.yourTeam[0].y = 250;
-        this.yourTeam[1].x = 650;
-        this.yourTeam[1].y = 200;
-        this.yourTeam[2].x = 650;
-        this.yourTeam[2].y = 300;
-        this.yourTeam[3].x = 550;
-        this.yourTeam[3].y = 250;
-        this.yourTeam[4].x = 800;
-        this.yourTeam[4].y = 150;
+        this.yourTeam[0].x = 750; this.yourTeam[0].y = 250;
+        this.yourTeam[1].x = 650; this.yourTeam[1].y = 200;
+        this.yourTeam[2].x = 650; this.yourTeam[2].y = 300;
+        this.yourTeam[3].x = 550; this.yourTeam[3].y = 250;
+        this.yourTeam[4].x = 800; this.yourTeam[4].y = 150;
         
-        // Opponent team (defending left basket at x=50)
-        this.oppTeam[0].x = 250;
-        this.oppTeam[0].y = 250;
-        this.oppTeam[1].x = 350;
-        this.oppTeam[1].y = 200;
-        this.oppTeam[2].x = 350;
-        this.oppTeam[2].y = 300;
-        this.oppTeam[3].x = 450;
-        this.oppTeam[3].y = 250;
-        this.oppTeam[4].x = 200;
-        this.oppTeam[4].y = 150;
+        this.oppTeam[0].x = 250; this.oppTeam[0].y = 250;
+        this.oppTeam[1].x = 350; this.oppTeam[1].y = 200;
+        this.oppTeam[2].x = 350; this.oppTeam[2].y = 300;
+        this.oppTeam[3].x = 450; this.oppTeam[3].y = 250;
+        this.oppTeam[4].x = 200; this.oppTeam[4].y = 150;
         
-        // Reset ball and velocities
         this.ballX = 500;
         this.ballY = 250;
         this.ballVelX = 0;
         this.ballVelY = 0;
         this.ballHolder = null;
         
-        // Reset shot clock
         this.shotClock = 24;
-        
         this.updateCourtDisplay();
       }
 
       playerShoot() {
         if (this.shotClockInterval) clearInterval(this.shotClockInterval);
 
-        // Distance factor: how far from opponent's basket (left side at x≈50)
         const player = this.yourTeam[0];
         const distToBasket = Math.sqrt(Math.pow(player.x - 50, 2) + Math.pow(player.y - 235, 2));
         const distanceFactor = Math.max(0, 1 - (distToBasket / 400));
         const shootStat = currentGameData.skill_level / 100;
         const energyFactor = this.energy / 150;
         
-        // Base percentages by distance
-        let basePercent = 0.35; // Long range
-        if (distToBasket < 300) basePercent = 0.45; // Mid-range
-        if (distToBasket < 150) basePercent = 0.60; // Close to basket
+        let basePercent = 0.35; 
+        if (distToBasket < 300) basePercent = 0.45; 
+        if (distToBasket < 150) basePercent = 0.60; 
 
         const shootChance = basePercent + shootStat * 0.2 + energyFactor * 0.1;
         const made = Math.random() < shootChance;
@@ -1217,7 +1172,6 @@
           
           this.time += 0.8;
           
-          // Ball goes through opponent's basket (left side at x=50)
           this.ballX = 50;
           this.ballY = 175;
           this.ballVelX = -3;
@@ -1225,10 +1179,8 @@
           this.ballHolder = null;
           this.updateCourtDisplay();
           
-          // Reset court after score - opponent gets the ball (faster)
           setTimeout(() => {
             this.resetCourt();
-            // Give ball to opponent to start their possession
             this.ballX = 250;
             this.ballY = 250;
             this.ballHolder = 'opp1';
@@ -1243,14 +1195,12 @@
         } else {
           document.getElementById('phase-text').textContent = `🔴 MISS! Rebound opportunity...`;
           
-          // Ball flies away on miss
           this.ballVelX = (Math.random() - 0.5) * 10;
           this.ballVelY = (Math.random() - 0.5) * 5 - 3;
           this.ballHolder = null;
           
           this.time += 0.6;
           
-          // Rebound fight: player can try to get it back
           const reboundChance = (currentGameData.skill_level / 150) + 0.2;
           if (Math.random() < reboundChance) {
             this.yourTeam[0].x = 100;
@@ -1276,14 +1226,11 @@
       }
 
       async runOpponentPossession() {
-        // Opponent moves toward player's basket (x=900)
         const oppCenter = this.oppTeam[0];
         const targetX = 800;
         const targetY = 235;
         
-        // Opponent drives/passes a few times
         for (let i = 0; i < (2 + Math.floor(Math.random() * 2)); i++) {
-          // Move opponent closer to basket
           if (oppCenter.x > targetX) {
             oppCenter.x = Math.max(targetX, oppCenter.x - 30);
           }
@@ -1302,8 +1249,7 @@
           await new Promise(r => setTimeout(r, 600));
         }
 
-        // Opponent shoots
-        const oppSkill = 50; // Default opponent skill
+        const oppSkill = 50; 
         const shootChance = 0.4 + (oppSkill / 250);
         const made = Math.random() < shootChance;
 
@@ -1315,10 +1261,8 @@
           
           this.time += 1.5;
           
-          // Reset court after opponent scores - you get the ball
           await new Promise(r => setTimeout(r, 1000));
           this.resetCourt();
-          // Give ball to you to start your possession
           this.ballX = 750;
           this.ballY = 250;
           this.ballHolder = 'you';
@@ -1328,13 +1272,11 @@
           this.time += 1.5;
           this.possession = 'player';
           
-          // Reset opponent to their end after possession
           this.oppTeam.forEach(p => {
             if (p.id === 'opp1') p.x = 250;
           });
         }
         
-        // Update shot clock display
         document.getElementById('court-clock-bar').style.width = `${Math.max(0, (this.shotClock / 24) * 100)}%`;
         
         this.updateCourtDisplay();
@@ -1345,18 +1287,13 @@
       }
 
       updateCourtDisplay() {
-        // Update all player positions on SVG
         this.updateTeamPositions();
         
-        // Ball physics when in motion (only if not held)
         if (this.ballHolder === null && (this.ballVelX !== 0 || this.ballVelY !== 0)) {
           this.ballX += this.ballVelX;
           this.ballY += this.ballVelY;
-          
-          // Gravity effect
           this.ballVelY += 0.15;
           
-          // Bounce off boundaries
           if (this.ballX < 30 || this.ballX > 970) {
             this.ballVelX *= -0.7;
             this.ballX = Math.max(30, Math.min(970, this.ballX));
@@ -1373,7 +1310,6 @@
           ballElement.setAttribute('cy', this.ballY);
         }
         
-        // Update ball texture lines to move with ball
         const ballLinesH = document.getElementById('court-ball-lines-h');
         const ballLinesV = document.getElementById('court-ball-lines-v');
         if (ballLinesH) {
@@ -1387,7 +1323,6 @@
       updateTeamPositions() {
         const svg = document.querySelector('svg');
         
-        // Update your team (green)
         this.yourTeam.forEach(player => {
           let circle = document.getElementById(`player-${player.id}`);
           if (!circle) {
@@ -1425,7 +1360,6 @@
           }
         });
         
-        // Update opponent team (red)
         this.oppTeam.forEach(player => {
           let circle = document.getElementById(`player-${player.id}`);
           if (!circle) {
@@ -1438,7 +1372,6 @@
             circle.setAttribute('stroke-width', '2');
             svg.appendChild(circle);
             
-            // Add label for opponent center
             if (player.id === 'opp1') {
               const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
               text.setAttribute('id', `text-${player.id}`);
@@ -1455,7 +1388,6 @@
           circle.setAttribute('cx', player.x);
           circle.setAttribute('cy', player.y);
           
-          // Update text for opponent center
           const textEl = document.getElementById(`text-opp1`);
           if (textEl && player.id === 'opp1') {
             textEl.setAttribute('x', player.x);
@@ -1476,7 +1408,6 @@
         document.getElementById('court-result-title').className = `font-display text-3xl ${won ? 'text-green-400' : 'text-red-400'} mb-4`;
         document.getElementById('court-final-score').textContent = `${this.playerScore} - ${this.oppScore}`;
 
-        // Better rewards for higher scoring and wins
         const pointDiff = this.playerScore - this.oppScore;
         let skillGain = won ? 4 : 1;
         if (pointDiff > 20) skillGain = 6;
@@ -1497,6 +1428,9 @@
         this.skillGain = skillGain;
       }
     }
+
+
+
 
     // ============ SDK INITIALIZATION ============
     function initializeSDKs() {
