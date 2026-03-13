@@ -21,11 +21,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    @keyframes qte-pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    
     .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
     .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
     
@@ -487,23 +482,23 @@
           <!-- Game Info / Controls (Left) -->
           <div id="controls-panel" class="md:col-span-1 order-3 md:order-1 transition-opacity duration-500 flex flex-col gap-4">
             <div class="glass-card rounded-lg p-4 sticky top-0 border-orange-500/30">
-              <h4 class="text-orange-400 font-bold mb-3 text-sm">⌨️ KEYBOARD</h4>
+              <h4 class="text-orange-400 font-bold mb-3 text-sm">🕹️ CONTROLS</h4>
               <div class="space-y-3 text-sm">
                 <div>
                   <p class="text-white font-semibold">MOVE</p>
-                  <p class="text-gray-400 text-xs">↑↓←→ or WASD</p>
+                  <p class="text-gray-400 text-xs">WASD / Tap Floor</p>
                 </div>
                 <div class="border-t border-white/10 pt-2">
                   <p class="text-green-400 font-semibold">SHOOT / STEAL</p>
-                  <p class="text-gray-400 text-xs">SPACEBAR</p>
+                  <p class="text-gray-400 text-xs">SPACEBAR / UI Btn</p>
                 </div>
                 <div class="border-t border-white/10 pt-2">
                   <p class="text-blue-400 font-semibold">PASS</p>
-                  <p class="text-gray-400 text-xs">P Key</p>
+                  <p class="text-gray-400 text-xs">P Key / UI Btn</p>
                 </div>
                 <div class="border-t border-white/10 pt-2">
                   <p class="text-yellow-400 font-semibold">DRIVE</p>
-                  <p class="text-gray-400 text-xs">D Key</p>
+                  <p class="text-gray-400 text-xs">D Key / UI Btn</p>
                 </div>
               </div>
             </div>
@@ -517,7 +512,7 @@
                 </div>
               </div>
               <div>
-                <p class="text-gray-400 text-xs mb-1">SHOT CLOCK</p>
+                <p class="text-gray-400 text-xs mb-1">QUARTER TIME</p>
                 <div class="bg-white/20 rounded-full h-2 overflow-hidden">
                   <div id="court-clock-bar" class="bg-red-500 h-full transition-all" style="width: 100%"></div>
                 </div>
@@ -532,22 +527,22 @@
               <div class="flex justify-between items-center mt-3 max-w-md mx-auto">
                 <div class="text-center">
                   <p class="text-gray-400 text-xs font-bold">YOU</p>
-                  <p id="court-player-score" class="text-green-400 font-bold text-3xl">0</p>
+                  <p id="court-player-score" class="text-green-400 font-bold text-4xl">0</p>
                 </div>
                 <div class="text-center px-6 py-1 bg-black/40 rounded-lg">
-                  <p class="text-gray-400 text-xs">QTR</p>
-                  <p id="court-quarter" class="text-white font-bold text-2xl">1</p>
+                  <p class="text-gray-400 text-xs">QTR <span id="court-quarter">1</span></p>
+                  <p id="court-quarter-clock" class="text-white font-bold text-2xl tracking-widest">45.0</p>
                 </div>
                 <div class="text-center">
                   <p class="text-gray-400 text-xs font-bold">OPP</p>
-                  <p id="court-opponent-score" class="text-red-400 font-bold text-3xl">0</p>
+                  <p id="court-opponent-score" class="text-red-400 font-bold text-4xl">0</p>
                 </div>
               </div>
             </div>
 
             <!-- Basketball Court 60FPS SVG Engine -->
-            <div class="rounded-xl overflow-hidden mb-4 border-4 border-gray-700 shadow-2xl relative">
-              <svg id="game-svg" class="w-full" viewBox="0 0 1000 500" style="background: #d48c5a; max-height: 450px;">
+            <div class="rounded-xl overflow-hidden mb-4 border-4 border-gray-700 shadow-2xl relative select-none">
+              <svg id="game-svg" class="w-full cursor-crosshair touch-none" viewBox="0 0 1000 500" style="background: #d48c5a; max-height: 450px;">
                 <defs>
                   <pattern id="wood-pattern" patternUnits="userSpaceOnUse" width="100" height="20">
                     <rect width="100" height="20" fill="#d48c5a"/>
@@ -618,7 +613,7 @@
             <div id="court-actions" class="grid grid-cols-3 gap-3 mb-4">
               <button id="court-shoot-btn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-3 rounded-lg transition-all shadow-lg active:scale-95 disabled:opacity-50">
                 <div class="text-2xl mb-1">🎯</div>
-                <div class="text-xs">SHOOT</div>
+                <div class="text-xs">SHOOT / STEAL</div>
               </button>
               <button id="court-pass-btn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-3 rounded-lg transition-all shadow-lg active:scale-95 disabled:opacity-50">
                 <div class="text-2xl mb-1">📍</div>
@@ -626,7 +621,7 @@
               </button>
               <button id="court-defend-btn" class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-3 rounded-lg transition-all shadow-lg active:scale-95 disabled:opacity-50">
                 <div class="text-2xl mb-1">🏃</div>
-                <div class="text-xs">DRIVE / STEAL</div>
+                <div class="text-xs">DRIVE DASH</div>
               </button>
             </div>
 
@@ -756,13 +751,16 @@
         this.playerScore = 0;
         this.oppScore = 0;
         this.quarter = 1;
-        this.time = 0;
+        this.gameClock = 45; // 45 seconds per quarter
+        
         this.possession = 'player';
         this.energy = 100;
         this.gameEnded = false;
         
         this.isTransitioning = false; 
         this.stunCooldown = 0; 
+        this.dashFrames = 0;
+        this.looseBall = false;
         
         // Dynamic Team Setup
         this.yourTeam = [
@@ -785,19 +783,95 @@
         this.ballY = 250;
         this.ballHolder = 'you'; 
         this.ballFlying = false;
+        this.ballVelX = 0;
+        this.ballVelY = 0;
         
-        this.shotClock = 24;
+        this.targetMoveX = undefined;
+        this.targetMoveY = undefined;
+        
         this.activeKeys = {};
+        
+        // Setup Tap-to-Move for Mobile Support
+        const svg = document.getElementById('game-svg');
+        this.pointerHandler = (e) => {
+            if (this.gameEnded || this.isTransitioning || this.ballFlying || this.looseBall) return;
+            const rect = svg.getBoundingClientRect();
+            // Scale screen coordinates exactly to the internal SVG 1000x500 box
+            this.targetMoveX = (e.clientX - rect.left) * (1000 / rect.width);
+            this.targetMoveY = (e.clientY - rect.top) * (500 / rect.height);
+            this.activeKeys = {}; // Clear WASD if touching
+        };
+        svg.addEventListener('pointerdown', this.pointerHandler);
+        svg.addEventListener('pointermove', (e) => {
+            if(e.buttons > 0) this.pointerHandler(e); // Allow dragging
+        });
       }
 
       startGame() {
         this.playerScore = 0;
         this.oppScore = 0;
         this.quarter = 1;
-        this.time = 0;
-        this.possession = Math.random() > 0.5 ? 'player' : 'opponent';
-        this.resetCourt();
+        this.gameClock = 45;
+        document.getElementById('court-quarter-clock').textContent = this.gameClock.toFixed(1);
+        
         this.startEngine();
+        this.doTipOff();
+      }
+
+      doTipOff() {
+        this.isTransitioning = true;
+        this.ballHolder = null;
+        this.ballX = 500; this.ballY = 250;
+        
+        // Line everyone up at Center Court
+        this.yourTeam[0].x = 540; this.yourTeam[0].y = 250;
+        this.oppTeam[0].x = 460; this.oppTeam[0].y = 250;
+        
+        this.yourTeam[1].x = 600; this.yourTeam[1].y = 150;
+        this.yourTeam[2].x = 600; this.yourTeam[2].y = 350;
+        this.yourTeam[3].x = 650; this.yourTeam[3].y = 200;
+        this.yourTeam[4].x = 650; this.yourTeam[4].y = 300;
+
+        this.oppTeam[1].x = 400; this.oppTeam[1].y = 150;
+        this.oppTeam[2].x = 400; this.oppTeam[2].y = 350;
+        this.oppTeam[3].x = 350; this.oppTeam[3].y = 200;
+        this.oppTeam[4].x = 350; this.oppTeam[4].y = 300;
+
+        document.getElementById('phase-text').textContent = '🏀 TIP OFF!';
+        
+        // Simulate physically tossing the ball in the air via size scaling
+        setTimeout(() => {
+            document.getElementById('phase-text').textContent = 'BALL IS UP!';
+            let ballRadius = 10;
+            let up = true;
+            
+            let tipInterval = setInterval(() => {
+                if (up) { 
+                    ballRadius += 0.8; 
+                    if (ballRadius >= 25) up = false; 
+                } else { 
+                    ballRadius -= 0.8; 
+                }
+                
+                const ball = document.getElementById('p-ball');
+                if(ball) ball.setAttribute('r', ballRadius);
+
+                if (!up && ballRadius <= 10) {
+                    clearInterval(tipInterval);
+                    if(ball) ball.setAttribute('r', 10); 
+                    
+                    this.possession = Math.random() > 0.5 ? 'player' : 'opponent';
+                    this.ballHolder = this.possession === 'player' ? 'you' : 'opp1';
+                    
+                    document.getElementById('phase-text').textContent = this.possession === 'player' ? '🟢 YOU WIN THE TIP!' : '🔴 OPPONENT WINS TIP!';
+                    
+                    setTimeout(() => {
+                        this.isTransitioning = false;
+                        document.getElementById('phase-text').textContent = this.possession === 'player' ? '🏀 YOUR BALL!' : '🛡️ DEFENSE!';
+                    }, 1000);
+                }
+            }, 16);
+        }, 1000);
       }
 
       startEngine() {
@@ -805,49 +879,42 @@
         this.enableKeyboardControls();
         document.getElementById('court-actions').querySelectorAll('button').forEach(btn => btn.disabled = false);
         
-        if (this.shotClockInterval) clearInterval(this.shotClockInterval);
-        this.shotClock = 24;
-        this.shotClockInterval = setInterval(() => {
-          if(!this.ballFlying && !this.gameEnded && !this.isTransitioning) {
-              this.shotClock--;
-              document.getElementById('court-clock-bar').style.width = `${Math.max(0, (this.shotClock / 24) * 100)}%`;
-              
-              if (this.shotClock <= 0) {
-                this.isTransitioning = true;
-                document.getElementById('phase-text').textContent = '⏰ SHOT CLOCK VIOLATION!';
-                this.possession = this.possession === 'player' ? 'opponent' : 'player';
-                setTimeout(() => {
-                    this.resetCourt();
-                    this.isTransitioning = false;
-                }, 1500);
-              }
-          }
-        }, 1000);
+        // Accurate Game Clock Interval
+        if (this.clockInterval) clearInterval(this.clockInterval);
+        this.clockInterval = setInterval(() => {
+            if(!this.gameEnded && !this.isTransitioning && !this.ballFlying && !this.looseBall) {
+                this.gameClock -= 0.1;
+                if(this.gameClock < 0) this.gameClock = 0;
+                document.getElementById('court-quarter-clock').textContent = this.gameClock.toFixed(1);
+                
+                // Sync the visual shotclock bar to represent 24s against the time
+                const scRatio = (this.gameClock % 24) / 24;
+                document.getElementById('court-clock-bar').style.width = `${scRatio * 100}%`;
+                
+                if (this.gameClock <= 0) {
+                    if (this.quarter >= 4) {
+                         this.endGame();
+                         return;
+                    } else {
+                         this.quarter++;
+                         this.gameClock = 45;
+                         document.getElementById('court-quarter').textContent = this.quarter;
+                         this.isTransitioning = true;
+                         document.getElementById('phase-text').textContent = `QUARTER ${this.quarter} STARTING...`;
+                         setTimeout(() => {
+                            this.possession = this.quarter % 2 === 0 ? 'opponent' : 'player';
+                            this.resetCourt();
+                            this.isTransitioning = false;
+                         }, 2000);
+                    }
+                }
+            }
+        }, 100);
 
+        // Core 60FPS Game Loop
         if (this.engineInterval) clearInterval(this.engineInterval);
         this.engineInterval = setInterval(() => {
           if (this.gameEnded) return;
-            
-          if (!this.isTransitioning && !this.ballFlying) {
-              this.time += 0.02; // Simulate time passing per tick
-          }
-
-          if (this.time >= 12 && !this.ballFlying && !this.isTransitioning) {
-             if (this.quarter >= 4) {
-                 this.endGame();
-                 return;
-             } else {
-                 this.quarter++;
-                 this.time = 0;
-                 document.getElementById('court-quarter').textContent = this.quarter;
-                 this.isTransitioning = true;
-                 document.getElementById('phase-text').textContent = `QUARTER ${this.quarter} STARTING...`;
-                 setTimeout(() => {
-                    this.resetCourt();
-                    this.isTransitioning = false;
-                 }, 2000);
-             }
-          }
           this.updateLogic();
           this.renderFrame();
         }, 16);
@@ -855,9 +922,46 @@
 
       stopEngine() {
           this.disableKeyboardControls();
+          const svg = document.getElementById('game-svg');
+          if (svg && this.pointerHandler) svg.removeEventListener('pointerdown', this.pointerHandler);
       }
 
       updateLogic() {
+        // --- LOOSE BALL REBOUNDING ---
+        if (this.looseBall) {
+            this.ballX += this.ballVelX;
+            this.ballY += this.ballVelY;
+            this.ballVelX *= 0.95; // Friction
+            this.ballVelY *= 0.95;
+            
+            // Wall Bounces
+            if (this.ballX < 20 || this.ballX > 980) this.ballVelX *= -0.8;
+            if (this.ballY < 20 || this.ballY > 480) this.ballVelY *= -0.8;
+            this.ballX = Math.max(20, Math.min(980, this.ballX));
+            this.ballY = Math.max(20, Math.min(480, this.ballY));
+
+            // Any player touching it grabs the rebound
+            let closest = null;
+            let minDist = 25; // Rebound grab radius
+            [...this.yourTeam, ...this.oppTeam].forEach(p => {
+                const d = Math.hypot(p.x - this.ballX, p.y - this.ballY);
+                if (d < minDist) { minDist = d; closest = p; }
+            });
+            
+            if (closest) {
+                this.looseBall = false;
+                this.ballHolder = closest.id;
+                this.possession = closest.isYou !== undefined ? 'player' : 'opponent';
+                document.getElementById('phase-text').textContent = (this.possession === 'player' ? '🟢 YOU' : '🔴 OPPONENT') + ' GOT REBOUND!';
+                this.isTransitioning = true;
+                setTimeout(()=> { 
+                    this.isTransitioning = false; 
+                    document.getElementById('phase-text').textContent = this.possession === 'player' ? '🏀 YOUR BALL!' : '🛡️ DEFENSE!';
+                }, 500);
+            }
+        }
+
+        // --- BALL PHYSICS (SHOTS) ---
         if (this.ballFlying) {
             this.ballX += this.ballVelX;
             this.ballY += this.ballVelY;
@@ -865,9 +969,9 @@
             
             if (this.ballFlyFrames <= 0) {
                 this.ballFlying = false;
-                this.isTransitioning = true; 
                 
                 if (this.shotWillGoIn) {
+                    this.isTransitioning = true; 
                     if (this.lastShooter === 'player') {
                         this.playerScore += this.shotPoints;
                         document.getElementById('court-player-score').textContent = this.playerScore;
@@ -886,13 +990,11 @@
                     }, 1500);
                 } else {
                     document.getElementById('phase-text').textContent = `🔴 MISSED SHOT!`;
-                    this.possession = this.lastShooter === 'player' ? 'opponent' : 'player';
-                    
-                    setTimeout(() => {
-                        this.ballHolder = this.possession === 'player' ? 'you' : 'opp1';
-                        this.isTransitioning = false;
-                        document.getElementById('phase-text').textContent = '🏀 REBOUND!';
-                    }, 800);
+                    // Convert into a loose ball instead of instant magic rebounding
+                    this.looseBall = true;
+                    // Deflect ball off the rim in random direction
+                    this.ballVelX = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 6 + 3);
+                    this.ballVelY = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 6 + 3);
                 }
             }
             return; 
@@ -900,6 +1002,7 @@
 
         if (this.isTransitioning) return; 
 
+        // --- ATTACH BALL TO HOLDER ---
         if (this.ballHolder === 'you') {
             this.ballX = this.yourTeam[0].x - 15;
             this.ballY = this.yourTeam[0].y;
@@ -908,21 +1011,58 @@
             this.ballY = this.oppTeam[0].y;
         }
 
+        // Helper to normalize movement
+        const moveTowards = (obj, targetX, targetY, speed) => {
+            const dx = targetX - obj.x;
+            const dy = targetY - obj.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > speed) {
+                obj.x += (dx / dist) * speed;
+                obj.y += (dy / dist) * speed;
+            } else {
+                obj.x = targetX;
+                obj.y = targetY;
+            }
+        };
+
+        // --- PLAYER MOVEMENT (WASD / DASH / TAP) ---
         const player = this.yourTeam[0];
         
         if (this.stunCooldown > 0) {
             this.stunCooldown--; 
+        } else if (this.dashFrames > 0) {
+            // Dash Burst movement
+            const dx = 55 - player.x; const dy = 250 - player.y; // Toward opponent hoop
+            const dist = Math.hypot(dx, dy);
+            if (dist > 1) { player.x += (dx/dist)*8; player.y += (dy/dist)*8; }
+            this.dashFrames--;
+            this.targetMoveX = undefined; // clear mouse target
         } else {
             const moveSpeed = 4;
-            if (this.activeKeys['arrowup'] || this.activeKeys['w']) player.y -= moveSpeed;
-            if (this.activeKeys['arrowdown'] || this.activeKeys['s']) player.y += moveSpeed;
-            if (this.activeKeys['arrowleft'] || this.activeKeys['a']) player.x -= moveSpeed;
-            if (this.activeKeys['arrowright'] || this.activeKeys['d']) player.x += moveSpeed;
             
+            // Check Keyboard first
+            let movedWithKeys = false;
+            if (this.activeKeys['arrowup'] || this.activeKeys['w']) { player.y -= moveSpeed; movedWithKeys = true; }
+            if (this.activeKeys['arrowdown'] || this.activeKeys['s']) { player.y += moveSpeed; movedWithKeys = true; }
+            if (this.activeKeys['arrowleft'] || this.activeKeys['a']) { player.x -= moveSpeed; movedWithKeys = true; }
+            if (this.activeKeys['arrowright'] || this.activeKeys['d']) { player.x += moveSpeed; movedWithKeys = true; }
+            
+            if (movedWithKeys) this.targetMoveX = undefined; // override pointer
+            
+            // Fallback to Point/Tap target
+            if (this.targetMoveX !== undefined) {
+                moveTowards(player, this.targetMoveX, this.targetMoveY, moveSpeed);
+                if (Math.hypot(player.x - this.targetMoveX, player.y - this.targetMoveY) < moveSpeed) {
+                    this.targetMoveX = undefined;
+                }
+            }
+            
+            // Bounds check
             player.x = Math.max(50, Math.min(950, player.x));
             player.y = Math.max(50, Math.min(450, player.y));
         }
 
+        // --- AI MOVEMENT (Spaced Out & Logical) ---
         const offSpots = [ {x: 0, y: 0}, {x: 300, y: 100}, {x: 300, y: 400}, {x: 100, y: 150}, {x: 100, y: 350} ];
         const oppOffSpots = [ {x: 0, y: 0}, {x: 700, y: 100}, {x: 700, y: 400}, {x: 900, y: 150}, {x: 900, y: 350} ];
 
@@ -938,13 +1078,15 @@
                 targetX = man.x; targetY = man.y;
                 if (dist > 0) { targetX -= (dx/dist)*40; targetY -= (dy/dist)*40; }
             }
-            tm.x += (targetX - tm.x) * 0.05;
-            tm.y += (targetY - tm.y) * 0.05;
+            moveTowards(tm, targetX, targetY, this.looseBall ? 5 : 3.5); 
+            // Teammates move faster if ball is loose to try to get it
         });
 
         this.oppTeam.forEach((opp, i) => {
             let targetX, targetY;
-            if (this.possession === 'opponent') {
+            if (this.looseBall) {
+                 targetX = this.ballX; targetY = this.ballY; // Chase the loose ball!
+            } else if (this.possession === 'opponent') {
                 if (i === 0) {
                     targetX = 800; targetY = 250; 
                     
@@ -965,8 +1107,9 @@
                 targetX = man.x; targetY = man.y;
                 if (dist > 0) { targetX -= (dx/dist)*40; targetY -= (dy/dist)*40; }
             }
-            opp.x += (targetX - opp.x) * 0.05;
-            opp.y += (targetY - opp.y) * 0.05;
+            
+            const speed = (this.possession === 'opponent' && i === 0) ? 3.8 : (this.looseBall ? 4.5 : 3.5);
+            moveTowards(opp, targetX, targetY, speed);
         });
       }
 
@@ -998,7 +1141,7 @@
         this.activeKeys = {};
 
         this.keyDownHandler = (e) => {
-          if (this.gameEnded || this.ballFlying || this.isTransitioning) return;
+          if (this.gameEnded || this.ballFlying || this.isTransitioning || this.looseBall) return;
           const key = e.key.toLowerCase();
           
           if (this.activeKeys[key]) return;
@@ -1029,39 +1172,44 @@
         }
         if (this.engineInterval) clearInterval(this.engineInterval);
         if (this.shotClockInterval) clearInterval(this.shotClockInterval);
+        if (this.clockInterval) clearInterval(this.clockInterval);
       }
 
       resetCourt() {
-        this.shotClock = 24;
         this.activeKeys = {};
+        this.targetMoveX = undefined;
         
         if(this.possession === 'player') {
-            this.yourTeam[0].x = 750; this.yourTeam[0].y = 250;
-            this.oppTeam[0].x = 550; this.oppTeam[0].y = 250;
+            // Start near own basket to inbound the ball
+            this.yourTeam[0].x = 920; this.yourTeam[0].y = 250;
+            this.oppTeam[0].x = 750; this.oppTeam[0].y = 250; 
             this.ballHolder = 'you';
-            document.getElementById('phase-text').textContent = '🏀 YOUR BALL! (Space to Shoot)';
+            document.getElementById('phase-text').textContent = '🏀 YOUR BALL!';
+            
+            this.yourTeam[1].x = 850; this.yourTeam[1].y = 100;
+            this.yourTeam[2].x = 850; this.yourTeam[2].y = 400;
+            this.yourTeam[3].x = 950; this.yourTeam[3].y = 150;
+            this.yourTeam[4].x = 950; this.yourTeam[4].y = 350;
+
+            this.oppTeam[1].x = 700; this.oppTeam[1].y = 100;
+            this.oppTeam[2].x = 700; this.oppTeam[2].y = 400;
+            this.oppTeam[3].x = 800; this.oppTeam[3].y = 150;
+            this.oppTeam[4].x = 800; this.oppTeam[4].y = 350;
         } else {
-            this.oppTeam[0].x = 250; this.oppTeam[0].y = 250;
-            this.yourTeam[0].x = 450; this.yourTeam[0].y = 250;
+            this.oppTeam[0].x = 80; this.oppTeam[0].y = 250;
+            this.yourTeam[0].x = 250; this.yourTeam[0].y = 250; 
             this.ballHolder = 'opp1';
-            document.getElementById('phase-text').textContent = '🛡️ DEFENSE! (Space to Steal)';
-        }
+            document.getElementById('phase-text').textContent = '🛡️ DEFENSE!';
+            
+            this.oppTeam[1].x = 150; this.oppTeam[1].y = 100;
+            this.oppTeam[2].x = 150; this.oppTeam[2].y = 400;
+            this.oppTeam[3].x = 50;  this.oppTeam[3].y = 150;
+            this.oppTeam[4].x = 50;  this.oppTeam[4].y = 350;
 
-        const offSpots = [ {x: 0, y: 0}, {x: 300, y: 100}, {x: 300, y: 400}, {x: 100, y: 150}, {x: 100, y: 350} ];
-        const oppOffSpots = [ {x: 0, y: 0}, {x: 700, y: 100}, {x: 700, y: 400}, {x: 900, y: 150}, {x: 900, y: 350} ];
-
-        for(let i=1; i<5; i++) {
-            if (this.possession === 'player') {
-                this.yourTeam[i].x = offSpots[i].x + 400; 
-                this.yourTeam[i].y = offSpots[i].y;
-                this.oppTeam[i].x = offSpots[i].x + 400; 
-                this.oppTeam[i].y = offSpots[i].y;
-            } else {
-                this.oppTeam[i].x = oppOffSpots[i].x - 400;
-                this.oppTeam[i].y = oppOffSpots[i].y;
-                this.yourTeam[i].x = oppOffSpots[i].x - 400;
-                this.yourTeam[i].y = oppOffSpots[i].y;
-            }
+            this.yourTeam[1].x = 300; this.yourTeam[1].y = 100;
+            this.yourTeam[2].x = 300; this.yourTeam[2].y = 400;
+            this.yourTeam[3].x = 200; this.yourTeam[3].y = 150;
+            this.yourTeam[4].x = 200; this.yourTeam[4].y = 350;
         }
       }
 
@@ -1097,17 +1245,21 @@
       playerDrive() {
         this.energy = Math.max(0, this.energy - 10);
         document.getElementById('court-energy-bar').style.width = `${this.energy}%`;
-        this.yourTeam[0].x -= 80; 
+        this.dashFrames = 15; // Smooth dash
+        document.getElementById('phase-text').textContent = '💨 QUICK DRIVE!';
       }
 
       playerPass() {
         this.energy = Math.max(0, this.energy - 5);
         document.getElementById('court-energy-bar').style.width = `${this.energy}%`;
         
+        // Pass to a teammate and swap control smoothly!
         const teammate = this.yourTeam[1]; 
         const tempX = this.yourTeam[0].x; const tempY = this.yourTeam[0].y;
         this.yourTeam[0].x = teammate.x; this.yourTeam[0].y = teammate.y;
         teammate.x = tempX; teammate.y = tempY;
+        this.targetMoveX = undefined; // clear mouse target
+        
         document.getElementById('phase-text').textContent = '📍 SWING PASS!';
       }
 
@@ -1416,16 +1568,16 @@
 
       // In-game buttons mapped perfectly to real-time functions
       document.getElementById('court-shoot-btn')?.addEventListener('click', () => {
-        if (!courtMode || courtMode.gameEnded) return;
+        if (!courtMode || courtMode.gameEnded || courtMode.looseBall) return;
         if (courtMode.possession === 'player') courtMode.playerShoot();
-        else showToast('You need possession to shoot!');
+        else courtMode.trySteal(); // Double up button
       });
       document.getElementById('court-pass-btn')?.addEventListener('click', () => {
-        if (!courtMode || courtMode.gameEnded) return;
+        if (!courtMode || courtMode.gameEnded || courtMode.looseBall) return;
         if (courtMode.possession === 'player') courtMode.playerPass();
       });
       document.getElementById('court-defend-btn')?.addEventListener('click', () => {
-        if (!courtMode || courtMode.gameEnded) return;
+        if (!courtMode || courtMode.gameEnded || courtMode.looseBall) return;
         if (courtMode.possession === 'player') courtMode.playerDrive();
         else courtMode.trySteal();
       });
