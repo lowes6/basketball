@@ -1294,7 +1294,16 @@
         const energyFactor = this.energy / 150;
         const skill = (currentGameData ? currentGameData.skill_level : 50) / 100;
         
-        let basePercent = dist < 200 ? 0.6 : 0.35;
+        // Check if contested by opponent
+        let isContested = false;
+        this.oppTeam.forEach(opp => {
+            if (Math.hypot(player.x - opp.x, player.y - opp.y) < 80) isContested = true;
+        });
+        
+        let basePercent = dist < 200 ? 0.55 : 0.30;
+        if (isContested) basePercent -= 0.20; // 20% Penalty for being closely guarded
+        
+        // Nerfed slightly so player isn't overwhelmingly dominant early on
         this.shotWillGoIn = Math.random() < (basePercent + skill*0.2 + energyFactor*0.1);
         this.shotPoints = dist > 300 ? 3 : 2;
         this.lastShooter = 'player';
@@ -1303,7 +1312,17 @@
       }
 
       opponentShoot(isContested) {
-        const baseChance = isContested ? 0.20 : 0.50; 
+        let oppSkill = 50;
+        if (currentOpponent) {
+            if (currentOpponent.difficulty === 'Easy') oppSkill = 45;
+            else if (currentOpponent.difficulty === 'Medium') oppSkill = 65;
+            else oppSkill = 85; 
+        }
+        
+        const skillFactor = oppSkill / 100;
+        let baseChance = 0.35 + (skillFactor * 0.30); 
+        if (isContested) baseChance -= 0.25; // 25% Penalty for your defense
+        
         this.shotWillGoIn = Math.random() < baseChance; 
         this.shotPoints = Math.random() > 0.7 ? 3 : 2;
         this.lastShooter = 'opponent';
@@ -1328,16 +1347,52 @@
         // Calculate remaining quarters (fractional based on remaining clock)
         const quartersLeft = (4 - this.quarter) + (this.gameClock / 45);
         
-        // Stats used for simulation
+        // Calculate effective player stats
         const playerSkill = currentGameData ? currentGameData.skill_level : 50;
-        const oppSkill = currentOpponent ? (currentOpponent.difficulty === 'Easy' ? 30 : (currentOpponent.difficulty === 'Medium' ? 55 : 85)) : 50;
+        const health = currentGameData ? currentGameData.health : 100;
+        const energy = currentGameData ? Math.max(0, 100 - currentGameData.fatigue) : 100;
         
-        // Simulate points based on time remaining and skill differences
-        const playerPtsPerQ = 8 + (playerSkill / 8) + (Math.random() * 6);
-        const oppPtsPerQ = 8 + (oppSkill / 8) + (Math.random() * 6);
+        // Player's OVR is their Skill, heavily penalized if they are injured or exhausted
+        const conditionModifier = (health + energy) / 200; // 0.0 to 1.0
+        const playerOVR = playerSkill * conditionModifier;
         
-        this.playerScore += Math.floor(playerPtsPerQ * quartersLeft);
-        this.oppScore += Math.floor(oppPtsPerQ * quartersLeft);
+        // Opponent difficulty mapping
+        let oppSkill = 50;
+        if (currentOpponent) {
+            if (currentOpponent.difficulty === 'Easy') oppSkill = 45;
+            else if (currentOpponent.difficulty === 'Medium') oppSkill = 65;
+            else oppSkill = 85; 
+        }
+        
+        // Simulate scoring per remaining quarter
+        let pPts = 0;
+        let oPts = 0;
+        const qtrsToSim = Math.ceil(quartersLeft);
+
+        for(let i=0; i<qtrsToSim; i++) {
+            // Apply weight for partial quarters (like starting the auto-sim with 10s left on the clock)
+            const weight = (i === 0) ? (this.gameClock / 45) : 1;
+
+            // Base score of ~22 pts per quarter. Advantages shift the score up or down.
+            const pAdvantage = (playerOVR - oppSkill) * 0.2;
+            const oAdvantage = (oppSkill - playerOVR) * 0.2;
+
+            // Add heavy RNG (-6 to +6 points) per quarter to allow for upsets
+            let qPlayer = (22 + pAdvantage + (Math.random() * 12 - 6)) * weight;
+            let qOpp = (22 + oAdvantage + (Math.random() * 12 - 6)) * weight;
+
+            pPts += qPlayer;
+            oPts += qOpp;
+        }
+        
+        this.playerScore += Math.round(pPts);
+        this.oppScore += Math.round(oPts);
+        
+        // Tie breaker
+        if (this.playerScore === this.oppScore) {
+            if (Math.random() > 0.5) this.playerScore += 1;
+            else this.oppScore += 1;
+        }
         
         this.endGame();
       }
