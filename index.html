@@ -625,6 +625,11 @@
               </button>
             </div>
 
+            <!-- Auto Finish Button -->
+            <button id="auto-finish-btn" class="w-full mb-4 bg-gray-700 hover:bg-gray-600 text-white text-sm font-bold py-3 rounded-lg transition-all shadow-lg border border-gray-600 flex items-center justify-center">
+              <i data-lucide="fast-forward" class="w-4 h-4 mr-2"></i> AUTO-FINISH GAME
+            </button>
+
             <!-- Game Result (shown at end) -->
             <div id="court-result" class="hidden text-center glass-card rounded-xl p-6">
               <div id="court-result-icon" class="text-6xl mb-4">🏆</div>
@@ -691,6 +696,21 @@
           <button id="start-new-season" class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-500 hover:to-orange-400 text-white font-bold py-4 px-8 rounded-lg transition-all w-full text-lg shadow-lg">
             Start Season <span id="next-season-num">2</span>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal for Auto-Finish -->
+    <div id="confirm-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
+      <div class="glass-card rounded-xl p-8 max-w-sm w-full animate-slide-up border border-white/20">
+        <div class="text-center">
+          <div class="text-5xl mb-4">⏩</div>
+          <h3 class="font-display text-3xl text-white mb-2">SIMULATE REMAINING TIME?</h3>
+          <p class="text-gray-400 text-sm mb-6">The rest of the game will be auto-calculated based on your Skill vs Opponent Difficulty.</p>
+          <div class="flex gap-3">
+            <button id="confirm-yes-btn" class="flex-1 bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg">Yes, Finish</button>
+            <button id="confirm-no-btn" class="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1295,12 +1315,38 @@
           document.getElementById('court-energy-bar').style.width = `${this.energy}%`;
       }
 
+      autoFinish() {
+        if (this.gameEnded) return;
+        
+        this.stopEngine();
+        
+        // Calculate remaining quarters (fractional based on remaining clock)
+        const quartersLeft = (4 - this.quarter) + (this.gameClock / 45);
+        
+        // Stats used for simulation
+        const playerSkill = currentGameData ? currentGameData.skill_level : 50;
+        const oppSkill = currentOpponent ? (currentOpponent.difficulty === 'Easy' ? 30 : (currentOpponent.difficulty === 'Medium' ? 55 : 85)) : 50;
+        
+        // Simulate points based on time remaining and skill differences
+        const playerPtsPerQ = 8 + (playerSkill / 8) + (Math.random() * 6);
+        const oppPtsPerQ = 8 + (oppSkill / 8) + (Math.random() * 6);
+        
+        this.playerScore += Math.floor(playerPtsPerQ * quartersLeft);
+        this.oppScore += Math.floor(oppPtsPerQ * quartersLeft);
+        
+        this.endGame();
+      }
+
       endGame() {
         this.stopEngine();
         this.gameEnded = true;
         
         const won = this.playerScore > this.oppScore;
         document.getElementById('court-actions').style.display = 'none';
+        
+        const autoFinishBtn = document.getElementById('auto-finish-btn');
+        if (autoFinishBtn) autoFinishBtn.style.display = 'none';
+        
         document.getElementById('court-result').classList.remove('hidden');
 
         document.getElementById('court-result-icon').textContent = won ? '🏆' : '😤';
@@ -1495,6 +1541,10 @@
       document.getElementById('court-modal').classList.remove('hidden');
       document.getElementById('court-result').classList.add('hidden');
       document.getElementById('court-actions').style.display = 'grid';
+      
+      const autoFinishBtn = document.getElementById('auto-finish-btn');
+      if (autoFinishBtn) autoFinishBtn.style.display = 'flex';
+      
       document.getElementById('court-opponent').textContent = `VS ${currentOpponent.name.toUpperCase()}`;
       
       document.getElementById('court-player-score').textContent = '0';
@@ -1580,6 +1630,27 @@
         if (!courtMode || courtMode.gameEnded || courtMode.looseBall) return;
         if (courtMode.possession === 'player') courtMode.playerDrive();
         else courtMode.trySteal();
+      });
+
+      document.getElementById('auto-finish-btn')?.addEventListener('click', () => {
+        if (courtMode && !courtMode.gameEnded) {
+            courtMode.isTransitioning = true; // Pause the game while prompt is open
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+      });
+
+      document.getElementById('confirm-yes-btn')?.addEventListener('click', () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        if (courtMode && !courtMode.gameEnded) {
+            courtMode.autoFinish();
+        }
+      });
+
+      document.getElementById('confirm-no-btn')?.addEventListener('click', () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        if (courtMode && !courtMode.gameEnded) {
+            courtMode.isTransitioning = false; // Unpause the game
+        }
       });
 
       document.getElementById('court-close-btn')?.addEventListener('click', () => {
