@@ -534,7 +534,7 @@
                 </div>
                 <div class="border-t border-white/10 pt-2">
                   <p class="text-blue-400 font-semibold">PASS</p>
-                  <p class="text-gray-400 text-xs">P Key / UI Btn</p>
+                  <p class="text-gray-400 text-xs">P or Z Key / UI Btn</p>
                 </div>
                 <div class="border-t border-white/10 pt-2">
                   <p class="text-yellow-400 font-semibold">DRIVE</p>
@@ -846,6 +846,9 @@
         this.ballVelX = 0;
         this.ballVelY = 0;
         
+        this.isPass = false;
+        this.passTarget = null;
+        
         this.targetMoveX = undefined;
         this.targetMoveY = undefined;
         
@@ -900,12 +903,12 @@
         document.getElementById('phase-text').textContent = '🏀 TIP OFF!';
         
         // Simulate physically tossing the ball in the air via size scaling
-        setTimeout(() => {
+        this.tipTimeout1 = setTimeout(() => {
             document.getElementById('phase-text').textContent = 'BALL IS UP!';
             let ballRadius = 10;
             let up = true;
             
-            let tipInterval = setInterval(() => {
+            this.tipInterval = setInterval(() => {
                 if (up) { 
                     ballRadius += 0.8; 
                     if (ballRadius >= 25) up = false; 
@@ -917,7 +920,7 @@
                 if(ball) ball.setAttribute('r', ballRadius);
 
                 if (!up && ballRadius <= 10) {
-                    clearInterval(tipInterval);
+                    clearInterval(this.tipInterval);
                     if(ball) ball.setAttribute('r', 10); 
                     
                     this.possession = Math.random() > 0.5 ? 'player' : 'opponent';
@@ -925,7 +928,7 @@
                     
                     document.getElementById('phase-text').textContent = this.possession === 'player' ? '🟢 YOU WIN THE TIP!' : '🔴 OPPONENT WINS TIP!';
                     
-                    setTimeout(() => {
+                    this.tipTimeout2 = setTimeout(() => {
                         this.isTransitioning = false;
                         document.getElementById('phase-text').textContent = this.possession === 'player' ? '🏀 YOUR BALL!' : '🛡️ DEFENSE!';
                     }, 1000);
@@ -984,6 +987,14 @@
           this.disableKeyboardControls();
           const svg = document.getElementById('game-svg');
           if (svg && this.pointerHandler) svg.removeEventListener('pointerdown', this.pointerHandler);
+          
+          // Clear any rogue tip-off animations if game is auto-finished or interrupted
+          if (this.tipTimeout1) clearTimeout(this.tipTimeout1);
+          if (this.tipInterval) clearInterval(this.tipInterval);
+          if (this.tipTimeout2) clearTimeout(this.tipTimeout2);
+          
+          const ball = document.getElementById('p-ball');
+          if (ball) ball.setAttribute('r', 10);
       }
 
       updateLogic() {
@@ -1021,7 +1032,7 @@
             }
         }
 
-        // --- BALL PHYSICS (SHOTS) ---
+        // --- BALL PHYSICS (SHOTS & PASSES) ---
         if (this.ballFlying) {
             this.ballX += this.ballVelX;
             this.ballY += this.ballVelY;
@@ -1029,6 +1040,22 @@
             
             if (this.ballFlyFrames <= 0) {
                 this.ballFlying = false;
+                
+                if (this.isPass) {
+                    this.isPass = false;
+                    
+                    // Swap control to the teammate that received the ball!
+                    const tempX = this.yourTeam[0].x; 
+                    const tempY = this.yourTeam[0].y;
+                    this.yourTeam[0].x = this.passTarget.x; 
+                    this.yourTeam[0].y = this.passTarget.y;
+                    this.passTarget.x = tempX; 
+                    this.passTarget.y = tempY;
+                    
+                    this.ballHolder = 'you';
+                    document.getElementById('phase-text').textContent = '🏀 YOUR BALL!';
+                    return; 
+                }
                 
                 if (this.shotWillGoIn) {
                     this.isTransitioning = true; 
@@ -1063,12 +1090,17 @@
         if (this.isTransitioning) return; 
 
         // --- ATTACH BALL TO HOLDER ---
-        if (this.ballHolder === 'you') {
-            this.ballX = this.yourTeam[0].x - 15;
-            this.ballY = this.yourTeam[0].y;
-        } else if (this.ballHolder === 'opp1') {
-            this.ballX = this.oppTeam[0].x + 15;
-            this.ballY = this.oppTeam[0].y;
+        if (this.ballHolder) {
+            let holderObj = this.yourTeam.find(p => p.id === this.ballHolder);
+            let isYourTeam = true;
+            if (!holderObj) {
+                holderObj = this.oppTeam.find(p => p.id === this.ballHolder);
+                isYourTeam = false;
+            }
+            if (holderObj) {
+                this.ballX = holderObj.x + (isYourTeam ? -15 : 15);
+                this.ballY = holderObj.y;
+            }
         }
 
         // Helper to normalize movement
@@ -1117,9 +1149,9 @@
                 }
             }
             
-            // Bounds check
-            player.x = Math.max(50, Math.min(950, player.x));
-            player.y = Math.max(50, Math.min(450, player.y));
+            // Bounds check (widened to allow stepping out of bounds for inbounds)
+            player.x = Math.max(15, Math.min(985, player.x));
+            player.y = Math.max(20, Math.min(480, player.y));
         }
 
         // --- AI MOVEMENT (Spaced Out & Logical) ---
@@ -1147,7 +1179,7 @@
             if (this.looseBall) {
                  targetX = this.ballX; targetY = this.ballY; // Chase the loose ball!
             } else if (this.possession === 'opponent') {
-                if (i === 0) {
+                if (opp.id === this.ballHolder) {
                     targetX = 800; targetY = 250; 
                     
                     const distToHoop = Math.hypot(opp.x - 945, opp.y - 250);
@@ -1168,7 +1200,7 @@
                 if (dist > 0) { targetX -= (dx/dist)*40; targetY -= (dy/dist)*40; }
             }
             
-            const speed = (this.possession === 'opponent' && i === 0) ? 3.8 : (this.looseBall ? 4.5 : 3.5);
+            const speed = (this.possession === 'opponent' && opp.id === this.ballHolder) ? 3.8 : (this.looseBall ? 4.5 : 3.5);
             moveTowards(opp, targetX, targetY, speed);
         });
       }
@@ -1211,7 +1243,7 @@
             e.preventDefault(); this.playerShoot();
           } else if (key === ' ' && this.possession === 'opponent') {
             e.preventDefault(); this.trySteal();
-          } else if (key === 'p' && this.possession === 'player') { 
+          } else if ((key === 'p' || key === 'z') && this.possession === 'player') { 
             e.preventDefault(); this.playerPass();
           } else if (key === 'd' && this.possession === 'player' && !this.activeKeys['arrowup'] && !this.activeKeys['arrowdown'] && !this.activeKeys['arrowleft'] && !this.activeKeys['arrowright'] && !this.activeKeys['w'] && !this.activeKeys['a'] && !this.activeKeys['s']) { 
             e.preventDefault(); this.playerDrive();
@@ -1240,11 +1272,11 @@
         this.targetMoveX = undefined;
         
         if(this.possession === 'player') {
-            // Start near own basket to inbound the ball
-            this.yourTeam[0].x = 920; this.yourTeam[0].y = 250;
+            // Start OUT OF BOUNDS near own basket to inbound the ball
+            this.yourTeam[0].x = 985; this.yourTeam[0].y = 250;
             this.oppTeam[0].x = 750; this.oppTeam[0].y = 250; 
             this.ballHolder = 'you';
-            document.getElementById('phase-text').textContent = '🏀 YOUR BALL!';
+            document.getElementById('phase-text').textContent = '🏀 YOUR INBOUND!';
             
             this.yourTeam[1].x = 850; this.yourTeam[1].y = 100;
             this.yourTeam[2].x = 850; this.yourTeam[2].y = 400;
@@ -1256,10 +1288,11 @@
             this.oppTeam[3].x = 800; this.oppTeam[3].y = 150;
             this.oppTeam[4].x = 800; this.oppTeam[4].y = 350;
         } else {
-            this.oppTeam[0].x = 80; this.oppTeam[0].y = 250;
+            // Start OUT OF BOUNDS near opponent's basket to defend their inbound
+            this.oppTeam[0].x = 15; this.oppTeam[0].y = 250;
             this.yourTeam[0].x = 250; this.yourTeam[0].y = 250; 
             this.ballHolder = 'opp1';
-            document.getElementById('phase-text').textContent = '🛡️ DEFENSE!';
+            document.getElementById('phase-text').textContent = '🛡️ DEFEND INBOUND!';
             
             this.oppTeam[1].x = 150; this.oppTeam[1].y = 100;
             this.oppTeam[2].x = 150; this.oppTeam[2].y = 400;
@@ -1274,14 +1307,16 @@
       }
 
       trySteal() {
-          if (this.stunCooldown > 0) return; 
+          if (this.stunCooldown > 0 || this.possession !== 'opponent') return; 
 
           const player = this.yourTeam[0];
-          const oppCenter = this.oppTeam[0];
-          const dist = Math.hypot(player.x - oppCenter.x, player.y - oppCenter.y);
+          const holder = this.oppTeam.find(p => p.id === this.ballHolder);
+          if (!holder) return; // Cannot steal if no one holds it
+
+          const dist = Math.hypot(player.x - holder.x, player.y - holder.y);
           
-          if (dist < 85) { 
-              if (Math.random() < 0.40) { 
+          if (dist < 90) { // Increased tackle radius slightly
+              if (Math.random() < 0.45) { // Increased steal chance to 45%
                   this.possession = 'player';
                   this.ballHolder = 'you';
                   document.getElementById('phase-text').textContent = '⚡ GREAT STEAL!';
@@ -1293,12 +1328,12 @@
                   }, 500);
               } else {
                   document.getElementById('phase-text').textContent = '❌ REACH-IN! (Crossed up)';
-                  this.stunCooldown = 40; 
-                  player.x += 20; 
+                  this.stunCooldown = 30; // Reduced stun penalty
+                  player.x += 15; 
               }
           } else {
               document.getElementById('phase-text').textContent = '💨 SWING AND A MISS!';
-              this.stunCooldown = 25; 
+              this.stunCooldown = 20; // Reduced stun penalty
           }
       }
 
@@ -1313,14 +1348,34 @@
         this.energy = Math.max(0, this.energy - 5);
         document.getElementById('court-energy-bar').style.width = `${this.energy}%`;
         
-        // Pass to a teammate and swap control smoothly!
-        const teammate = this.yourTeam[1]; 
-        const tempX = this.yourTeam[0].x; const tempY = this.yourTeam[0].y;
-        this.yourTeam[0].x = teammate.x; this.yourTeam[0].y = teammate.y;
-        teammate.x = tempX; teammate.y = tempY;
-        this.targetMoveX = undefined; // clear mouse target
+        const player = this.yourTeam[0];
+        let nearestTeammate = null;
+        let minDist = Infinity;
         
-        document.getElementById('phase-text').textContent = '📍 SWING PASS!';
+        // Find the nearest teammate to pass to
+        for (let i = 1; i < this.yourTeam.length; i++) {
+            const tm = this.yourTeam[i];
+            const dist = Math.hypot(player.x - tm.x, player.y - tm.y);
+            if (dist < minDist) {
+                minDist = dist;
+                nearestTeammate = tm;
+            }
+        }
+        
+        if (nearestTeammate) {
+            this.isPass = true;
+            this.passTarget = nearestTeammate;
+            
+            // Start pass animation
+            this.ballHolder = null;
+            this.ballFlying = true;
+            this.ballFlyFrames = 15; // Snappy pass speed
+            this.ballVelX = (nearestTeammate.x - this.ballX) / this.ballFlyFrames;
+            this.ballVelY = (nearestTeammate.y - this.ballY) / this.ballFlyFrames;
+            
+            this.targetMoveX = undefined; // clear mouse target
+            document.getElementById('phase-text').textContent = '📍 PASSING...';
+        }
       }
 
       playerShoot() {
@@ -1342,6 +1397,7 @@
         this.shotWillGoIn = Math.random() < (basePercent + skill*0.2 + energyFactor*0.1);
         this.shotPoints = dist > 300 ? 3 : 2;
         this.lastShooter = 'player';
+        this.isPass = false; // Ensure it's treated as a shot
         
         this.fireBallAnim(55, 250);
       }
@@ -1361,6 +1417,7 @@
         this.shotWillGoIn = Math.random() < baseChance; 
         this.shotPoints = Math.random() > 0.7 ? 3 : 2;
         this.lastShooter = 'opponent';
+        this.isPass = false; // Ensure it's treated as a shot
         this.fireBallAnim(945, 250);
       }
 
@@ -1637,6 +1694,10 @@
 
     // ============ ACTIONS & EVENTS ============
     function playMatch() {
+      if (window.isStartingMatch) return; // Prevent double-clicks from overlapping games
+      window.isStartingMatch = true;
+      setTimeout(() => { window.isStartingMatch = false; }, 1000);
+        
       if (!currentGameData) return;
       if (currentGameData.weeks_remaining <= 0) return showToast('Season over! Sim to next season.');
       if (100 - currentGameData.fatigue < 20) return showToast('Too tired to play! Rest first.');
