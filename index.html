@@ -905,23 +905,22 @@
         // Simulate physically tossing the ball in the air via size scaling
         this.tipTimeout1 = setTimeout(() => {
             document.getElementById('phase-text').textContent = 'BALL IS UP!';
-            let ballRadius = 10;
+            let ballY = 250;
             let up = true;
             
             this.tipInterval = setInterval(() => {
                 if (up) { 
-                    ballRadius += 0.8; 
-                    if (ballRadius >= 25) up = false; 
+                    ballY -= 6; // Move ball up
+                    if (ballY <= 50) up = false; 
                 } else { 
-                    ballRadius -= 0.8; 
+                    ballY += 6; // Move ball down
                 }
                 
-                const ball = document.getElementById('p-ball');
-                if(ball) ball.setAttribute('r', ballRadius);
+                this.ballY = ballY;
 
-                if (!up && ballRadius <= 10) {
+                if (!up && ballY >= 250) {
                     clearInterval(this.tipInterval);
-                    if(ball) ball.setAttribute('r', 10); 
+                    this.ballY = 250; 
                     
                     this.possession = Math.random() > 0.5 ? 'player' : 'opponent';
                     this.ballHolder = this.possession === 'player' ? 'you' : 'opp1';
@@ -1155,8 +1154,8 @@
         }
 
         // --- AI MOVEMENT (Spaced Out & Logical) ---
-        const offSpots = [ {x: 0, y: 0}, {x: 300, y: 100}, {x: 300, y: 400}, {x: 100, y: 150}, {x: 100, y: 350} ];
-        const oppOffSpots = [ {x: 0, y: 0}, {x: 700, y: 100}, {x: 700, y: 400}, {x: 900, y: 150}, {x: 900, y: 350} ];
+        const offSpots = [ {x: 250, y: 250}, {x: 300, y: 100}, {x: 300, y: 400}, {x: 100, y: 150}, {x: 100, y: 350} ];
+        const oppOffSpots = [ {x: 750, y: 250}, {x: 700, y: 100}, {x: 700, y: 400}, {x: 900, y: 150}, {x: 900, y: 350} ];
 
         this.yourTeam.forEach((tm, i) => {
             if (tm.isYou) return;
