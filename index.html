@@ -2,7 +2,7 @@
 <html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Basketball Cost of Living</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
@@ -854,20 +854,46 @@
         
         this.activeKeys = {};
         
-        // Setup Tap-to-Move for Mobile Support
+        // Setup Tap/Drag-to-Move for Mobile & iPad Support
         const svg = document.getElementById('game-svg');
+        this.isDragging = false;
+        
         this.pointerHandler = (e) => {
             if (this.gameEnded || this.isTransitioning || this.ballFlying || this.looseBall) return;
+            
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            if (clientX === undefined || clientY === undefined) return;
+
             const rect = svg.getBoundingClientRect();
             // Scale screen coordinates exactly to the internal SVG 1000x500 box
-            this.targetMoveX = (e.clientX - rect.left) * (1000 / rect.width);
-            this.targetMoveY = (e.clientY - rect.top) * (500 / rect.height);
+            this.targetMoveX = (clientX - rect.left) * (1000 / rect.width);
+            this.targetMoveY = (clientY - rect.top) * (500 / rect.height);
             this.activeKeys = {}; // Clear WASD if touching
         };
-        svg.addEventListener('pointerdown', this.pointerHandler);
-        svg.addEventListener('pointermove', (e) => {
-            if(e.buttons > 0) this.pointerHandler(e); // Allow dragging
-        });
+
+        this.touchHandler = (e) => {
+            e.preventDefault(); // Prevent iPad scrolling while dragging
+            this.pointerHandler(e);
+        };
+        
+        this.mouseDownHandler = (e) => { this.isDragging = true; this.pointerHandler(e); };
+        this.mouseMoveHandler = (e) => { if (this.isDragging) this.pointerHandler(e); };
+        this.mouseUpHandler = () => { this.isDragging = false; };
+
+        // Attach robust listeners for touch and mouse
+        svg.addEventListener('touchstart', this.touchHandler, { passive: false });
+        svg.addEventListener('touchmove', this.touchHandler, { passive: false });
+        svg.addEventListener('mousedown', this.mouseDownHandler);
+        window.addEventListener('mousemove', this.mouseMoveHandler);
+        window.addEventListener('mouseup', this.mouseUpHandler);
       }
 
       startGame() {
@@ -985,7 +1011,13 @@
       stopEngine() {
           this.disableKeyboardControls();
           const svg = document.getElementById('game-svg');
-          if (svg && this.pointerHandler) svg.removeEventListener('pointerdown', this.pointerHandler);
+          if (svg) {
+              svg.removeEventListener('touchstart', this.touchHandler);
+              svg.removeEventListener('touchmove', this.touchHandler);
+              svg.removeEventListener('mousedown', this.mouseDownHandler);
+          }
+          window.removeEventListener('mousemove', this.mouseMoveHandler);
+          window.removeEventListener('mouseup', this.mouseUpHandler);
           
           // Clear any rogue tip-off animations if game is auto-finished or interrupted
           if (this.tipTimeout1) clearTimeout(this.tipTimeout1);
@@ -1798,17 +1830,31 @@
 
       document.getElementById('play-game-btn')?.addEventListener('click', playMatch);
 
-      // In-game buttons mapped perfectly to real-time functions
-      document.getElementById('court-shoot-btn')?.addEventListener('click', () => {
+      // Instant-Response Mobile Action Buttons
+      const bindActionBtn = (id, actionFn) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        const handler = (e) => {
+          e.preventDefault(); // Stop zoom/scroll and duplicate clicks on iPad
+          if (btn.disabled) return;
+          actionFn();
+        };
+        btn.addEventListener('touchstart', handler, { passive: false });
+        btn.addEventListener('mousedown', handler);
+      };
+
+      bindActionBtn('court-shoot-btn', () => {
         if (!courtMode || courtMode.gameEnded || courtMode.looseBall) return;
         if (courtMode.possession === 'player') courtMode.playerShoot();
         else courtMode.trySteal(); // Double up button
       });
-      document.getElementById('court-pass-btn')?.addEventListener('click', () => {
+      
+      bindActionBtn('court-pass-btn', () => {
         if (!courtMode || courtMode.gameEnded || courtMode.looseBall) return;
         if (courtMode.possession === 'player') courtMode.playerPass();
       });
-      document.getElementById('court-defend-btn')?.addEventListener('click', () => {
+      
+      bindActionBtn('court-defend-btn', () => {
         if (!courtMode || courtMode.gameEnded || courtMode.looseBall) return;
         if (courtMode.possession === 'player') courtMode.playerDrive();
         else courtMode.trySteal();
