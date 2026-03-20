@@ -910,10 +910,10 @@
             
             this.tipInterval = setInterval(() => {
                 if (up) { 
-                    ballY -= 6; // Move ball up
-                    if (ballY <= 50) up = false; 
+                    ballY -= 4; // Move ball up (slower)
+                    if (ballY <= 150) up = false; // Lower apex
                 } else { 
-                    ballY += 6; // Move ball down
+                    ballY += 4; // Move ball down
                 }
                 
                 this.ballY = ballY;
@@ -1197,6 +1197,25 @@
                 const dist = Math.hypot(dx, dy);
                 targetX = man.x; targetY = man.y;
                 if (dist > 0) { targetX -= (dx/dist)*40; targetY -= (dy/dist)*40; }
+                
+                // NEW: Opponent Steal Logic
+                const distToMan = Math.hypot(opp.x - man.x, opp.y - man.y);
+                if (this.ballHolder === man.id && distToMan < 45 && !this.isTransitioning) {
+                    let stealRate = 0.002; // Easy
+                    if (currentOpponent && currentOpponent.difficulty === 'Medium') stealRate = 0.005;
+                    if (currentOpponent && currentOpponent.difficulty === 'Hard') stealRate = 0.008;
+                    
+                    if (Math.random() < stealRate) {
+                        this.possession = 'opponent';
+                        this.ballHolder = opp.id;
+                        document.getElementById('phase-text').textContent = '⚠️ BALL STOLEN!';
+                        this.isTransitioning = true;
+                        setTimeout(() => {
+                            this.isTransitioning = false;
+                            document.getElementById('phase-text').textContent = '🛡️ DEFENSE!';
+                        }, 800);
+                    }
+                }
             }
             
             const speed = (this.possession === 'opponent' && opp.id === this.ballHolder) ? 3.8 : (this.looseBall ? 4.5 : 3.5);
